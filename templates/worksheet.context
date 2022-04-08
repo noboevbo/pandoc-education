@@ -94,6 +94,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 % \setupxtable[body][]
 % \setupxtable[foot][bottomframe=on]
 
+\definecolor[codebggray][r=0.95, g=0.95, b=0.95]
 \definebar
   [redmarker]
   [color=red,
@@ -126,12 +127,37 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
    continue=yes,
    order=background]
 
+\definetextbackground
+  [VerbatimBackground]
+  [location=paragraph,
+   background=off,
+   frame=on,
+   topoffset=0.25ex,
+   bottomoffset=0.25ex,
+   framecolor=black]
+
 \usemodule[vim]
 \definevimtyping[html][
   syntax=html,
   numbering=yes,
   tab=4,
   escape=command]
+
+\definevimtyping[javascript][
+  syntax=javascript,
+  numbering=yes,
+  tab=4,
+  escape=command]
+
+\definevimtyping[plain][
+  numbering=yes,
+  tab=4,
+  escape=command,
+  margin=0.5ex,
+  spacebefore=line,
+  spaceafter=line,
+  before=\startVerbatimBackground,
+  after=\stopVerbatimBackground]
 
 % Turn off section numbers by default
 \setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
