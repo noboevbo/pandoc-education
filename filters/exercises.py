@@ -26,7 +26,7 @@ def process_exercise_header(elem, doc):
             return
         left = RawInline(f'\\llap{{\\getglyphdirect{{ZapfDingbats*dingbats}}{{\\number"270E}}~}}Aufgabe {len(doc.exercises)}: ', format="context")
         if "time" in elem.attributes:
-            right = RawInline (f'\\wordright{{\\symbol[fontawesome-regular][clock]~{elem.attributes["time"]} Minuten}}', format="context")
+            right = RawInline (f'\\wordright{{\\tfx\\symbol[fontawesome-regular][clock]~{elem.attributes["time"]} Minuten}}', format="context")
         if left:
             elem.content = [left] + list(elem.content)
         else:

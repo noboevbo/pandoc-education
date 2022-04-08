@@ -1,0 +1,117 @@
+$if(context-lang)$
+\mainlanguage[$context-lang$]
+$endif$
+% Enable hyperlinks
+\setupinteraction
+  [state=start,
+$if(title)$
+  title={$title$},
+$endif$
+$if(subtitle)$
+  subtitle={$subtitle$},
+$endif$
+$if(author)$
+  author={$for(author)$$author$$sep$; $endfor$},
+$endif$
+$if(keywords)$
+  keyword={$for(keywords)$$keywords$$sep$; $endfor$},
+$endif$
+  style=$linkstyle$,
+  color=$linkcolor$,
+  contrastcolor=$linkcontrastcolor$]
+
+\setuppapersize[A4]
+
+\setuplanguage[de] 
+[leftquote=\rightsubguillemot,rightquote=\leftsubguillemot,
+leftquotation=\rightguillemot,rightquotation=\leftguillemot]
+
+\setuplayout[
+  topspace=1.5cm,
+  height=fit,
+  headerdistance=-0.7cm,
+  % footerdistance=2cm,
+  bottomspace=2cm,
+  ]
+
+\usesymbols[fontawesome]
+\usesymbols[cc]
+
+\definehspace[date][7 em]
+
+\definecolor[schoolcolor][c=1,m=0.68,y=0,k=0.14]
+\setupheader[text][
+    before={\startframed[frame=off,bottomframe=on,framecolor=schoolcolor]},
+    after={\stopframed},
+    style=\tfx
+    ]
+\setupfooter[text][
+    style=\tfx
+    ]
+\setupheadertexts[$title$]
+\setupheadertexts[$class$][{\symbol[fontawesome-regular][calendar]\hspace[date]\color[schoolcolor]{$schoolname$}}]
+\setupfootertexts[Seite \currentpage~von \lastpage]
+\setupfootertexts[$author$][{\symbol[cc][cc]\symbol[cc][by]\symbol[cc][sa]}]
+
+\setupfloat[figure][default={here}]
+\setupfloat[table][default={here, split}]
+
+\starttypescript [gillius]
+  \definefontsynonym[GilliusADF-Regular]    [file:GilliusADF-Regular]
+  \definefontsynonym[GilliusADF-Italic]     [file:GilliusADF-Italic]
+  \definefontsynonym[GilliusADF-Bold]       [file:GilliusADF-Bold]
+  \definefontsynonym[GilliusADF-BoldItalic] [file:GilliusADF-BoldItalic]
+\stoptypescript
+
+\starttypescript [gillius]
+  \setups[font:fallback:sans]
+  \definefontsynonym[Sans]                [GilliusADF-Regular]    [features=default]
+  \definefontsynonym[SansItalic]          [GilliusADF-Italic]     [features=default]
+  \definefontsynonym[SansBold]            [GilliusADF-Bold]       [features=default]
+  \definefontsynonym[SansBoldItalic]      [GilliusADF-BoldItalic] [features=default]
+\stoptypescript
+
+\starttypescript [gillius]
+  \definetypeface [gillius]    [rm] [serif] [gillius]    [default]
+\stoptypescript
+\setupbodyfont[gillius,ss,13pt]
+% \setupxtable[frame=off]
+% \setupxtable[head][topframe=on,bottomframe=on]
+% \setupxtable[body][]
+% \setupxtable[foot][bottomframe=on]
+
+
+\usemodule[vim]
+\definevimtyping[html][
+  syntax=html,
+  numbering=yes,
+  tab=4
+]
+
+% Turn off section numbers by default
+\setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\starttext
+$for(include-before)$
+$include-before$
+$endfor$
+$if(toc)$
+\completecontent
+$endif$
+$if(lof)$
+\completelistoffigures
+$endif$
+$if(lot)$
+\completelistoftables
+$endif$
+
+$body$
+
+$for(include-after)$
+$include-after$
+$endfor$
+\stoptext

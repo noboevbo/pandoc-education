@@ -4,7 +4,7 @@
 Processes exercises
 """
 
-from panflute import Div, run_filter, Str, Span, Table, TableBody, TableHead, TableCell, TableRow, Caption, Para, convert_text, TableFoot
+from panflute import Div, run_filter, Str, Span, Table, TableBody, TableHead, TableCell, TableRow, Caption, Para, convert_text, TableFoot, RawInline
 from utils.helpers import get_exercise_for_element
 from utils.models import Expectation, ExerciseExpectation
 import logging
@@ -24,11 +24,22 @@ def process_expectation(elem, doc):
     bonus_points = elem.attributes["bonus-points"] if "bonus-points" in elem.attributes else 0
     doc.exercise_expectations[-1].expectations.append(Expectation(elem.content, float(points),  float(bonus_points)))
 
+def add_points_to_exercise(elem, doc, points, bonuspoints):
+    elem.attributes["points"] = str(points)
+    elem.attributes["bonus-points"] = str(bonuspoints)
+    bonus_points_text = f" (+{bonuspoints})" if bonuspoints > 0 else ""
+    if doc.format != 'context':
+        return
+    elem.content = list(elem.content) + [RawInline(f'\\tfx\\inrightmargin{{\\hl[2] / ~{points}{bonus_points_text} P.}}', format="context")]
+
 def process_expectations(elem, doc):
     logging.info("Found Expectations Block")
     exercise = get_exercise_for_element(elem, doc)
+    # TODO: Update exercise with points!
+    add_points_to_exercise(exercise.elem, doc, 2, 2)
     doc.exercise_expectations.append(ExerciseExpectation(exercise, []))
     elem.walk(process_expectation, doc)
+    return []
 
 def write_expectations_table(exercise_expectations, doc):
     header1 = TableCell(*convert_text('Die Schülerin/der Schüler'))
