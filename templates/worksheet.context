@@ -1,6 +1,7 @@
 $if(context-lang)$
 \mainlanguage[$context-lang$]
 $endif$
+\usemodule[tikz]
 % Enable hyperlinks
 \setupinteraction
   [state=start,
@@ -53,8 +54,21 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 \setupfootertexts[Seite \currentpage~von \lastpage]
 \setupfootertexts[$author$][{\symbol[cc][cc]\symbol[cc][by]\symbol[cc][sa]}]
 
-\setupfloat[figure][default={here}]
+\setupfloat[figure][default={here, nonumber}]
 \setupfloat[table][default={here, split}]
+
+\definemeasure[cslhangindent][1.5em]
+\definenarrower[hangingreferences][left=\measure{cslhangindent}]
+\definestartstop [cslreferences] [
+	$if(csl-hanging-indent)$
+	before={%
+	  \starthangingreferences[left]
+      \setupindenting[-\leftskip,yes,first]
+      \doindentation
+  	},
+  	after=\stophangingreferences,
+	$endif$
+]
 
 \starttypescript [gillius]
   \definefontsynonym[GilliusADF-Regular]    [file:GilliusADF-Regular]
@@ -80,13 +94,44 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 % \setupxtable[body][]
 % \setupxtable[foot][bottomframe=on]
 
+\definebar
+  [redmarker]
+  [color=red,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\definebar
+  [yellowmarker]
+  [color=yellow,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\definebar
+  [greenmarker]
+  [color=green,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\definebar
+  [bluemarker]
+  [color=green,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
 
 \usemodule[vim]
 \definevimtyping[html][
   syntax=html,
   numbering=yes,
-  tab=4
-]
+  tab=4,
+  escape=command]
 
 % Turn off section numbers by default
 \setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
