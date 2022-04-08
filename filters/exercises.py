@@ -22,6 +22,8 @@ def process_exercise_header(elem, doc):
         exercise_id = str(len(doc.exercises)+1)
         elem.attributes["id"] = exercise_id
         doc.exercises[exercise_id] = Exercise.get_from_elem(elem)
+        right = False
+        left = False
         if doc.format != 'context':
             return
         left = RawInline(f'\\llap{{\\getglyphdirect{{ZapfDingbats*dingbats}}{{\\number"270E}}~}}Aufgabe {len(doc.exercises)}: ', format="context")

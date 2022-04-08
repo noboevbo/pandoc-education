@@ -1,0 +1,233 @@
+\mainlanguage[de]
+\usemodule[tikz]
+% Enable hyperlinks
+\setupinteraction
+  [state=start,
+  title={Suchen im Internet},
+  author={bug},
+  style=,
+  color=,
+  contrastcolor=]
+
+\setuppapersize[A4]
+
+\setuplanguage[de] 
+[leftquote=\rightsubguillemot,rightquote=\leftsubguillemot,
+leftquotation=\rightguillemot,rightquotation=\leftguillemot]
+
+\setuplayout[
+  topspace=1.5cm,
+  height=fit,
+  headerdistance=-0.7cm,
+  % footerdistance=2cm,
+  bottomspace=2cm,
+  ]
+
+\usesymbols[fontawesome]
+\usesymbols[cc]
+
+\definehspace[date][7 em]
+
+\definecolor[schoolcolor][c=1,m=0.68,y=0,k=0.14]
+\setupheader[text][
+    before={\startframed[frame=off,bottomframe=on,framecolor=schoolcolor]},
+    after={\stopframed},
+    style=\tfx
+    ]
+\setupfooter[text][
+    style=\tfx
+    ]
+\setupheadertexts[Suchen im Internet]
+\setupheadertexts[TGG11][{\symbol[fontawesome-regular][calendar]\hspace[date]\color[schoolcolor]{pmhs}}]
+\setupfootertexts[Seite \currentpage~von \lastpage]
+\setupfootertexts[bug][{\symbol[cc][cc]\symbol[cc][by]\symbol[cc][sa]}]
+
+\setupfloat[figure][default={here, nonumber}]
+\setupfloat[table][default={here, split}]
+
+\definemeasure[cslhangindent][1.5em]
+\definenarrower[hangingreferences][left=\measure{cslhangindent}]
+\definestartstop [cslreferences] [
+		before={%
+	  \starthangingreferences[left]
+      \setupindenting[-\leftskip,yes,first]
+      \doindentation
+  	},
+  	after=\stophangingreferences,
+	]
+
+\starttypescript [gillius]
+  \definefontsynonym[GilliusADF-Regular]    [file:GilliusADF-Regular]
+  \definefontsynonym[GilliusADF-Italic]     [file:GilliusADF-Italic]
+  \definefontsynonym[GilliusADF-Bold]       [file:GilliusADF-Bold]
+  \definefontsynonym[GilliusADF-BoldItalic] [file:GilliusADF-BoldItalic]
+\stoptypescript
+
+\starttypescript [gillius]
+  \setups[font:fallback:sans]
+  \definefontsynonym[Sans]                [GilliusADF-Regular]    [features=default]
+  \definefontsynonym[SansItalic]          [GilliusADF-Italic]     [features=default]
+  \definefontsynonym[SansBold]            [GilliusADF-Bold]       [features=default]
+  \definefontsynonym[SansBoldItalic]      [GilliusADF-BoldItalic] [features=default]
+\stoptypescript
+
+\starttypescript [gillius]
+  \definetypeface [gillius]    [rm] [serif] [gillius]    [default]
+\stoptypescript
+\setupbodyfont[gillius,ss,13pt]
+% \setupxtable[frame=off]
+% \setupxtable[head][topframe=on,bottomframe=on]
+% \setupxtable[body][]
+% \setupxtable[foot][bottomframe=on]
+
+\definebar
+  [redmarker]
+  [color=red,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\definebar
+  [yellowmarker]
+  [color=yellow,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\definebar
+  [greenmarker]
+  [color=green,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\definebar
+  [bluemarker]
+  [color=green,
+   rulethickness=1.2em,
+   offset=1.2,
+   continue=yes,
+   order=background]
+
+\usemodule[vim]
+\definevimtyping[html][
+  syntax=html,
+  numbering=yes,
+  tab=4,
+  escape=command]
+
+% Turn off section numbers by default
+\setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
+
+
+\starttext
+
+\section[title={Example information
+text},reference={example-information-text}]
+
+This is an info text. Suchmaschinen, wie zum Beispiel {\bf google.de}
+oder {\bf duckduckgo.com}, helfen einem oft dabei Fragen zu beantworten
+und Probleme schnell und selbstständig zu lösen. Dazu sind aber gezielte
+Suchanfragen und eine Bewertung der Suchergebnisse notwendig. Der QR
+Code rechts führt zu einem Video, in dem einige Tipps zur Verwendung von
+Suchmaschinen gezeigt werden. Sieh dir das Video an und mache dir
+Notizen.
+
+Here's a citation (Ludl, Gulde, and Curio 2019).
+
+Or Footnote Style: \footnote{(Ludl, Gulde, and Curio 2019)} Quarks.
+
+Marks, hier gehts weiter.
+
+\section[title={Exercise: Image},reference={exercise-image}]
+
+This is an exercise with an image, which can be referenced as ich
+schreib hier See the Abbildung~1. Was ist denn hier los?
+
+\placefigure[][fig:qrcode]{{\bf Abbildung 1:} This is the
+caption}{\externalfigure[qrcodeYouTubeVideo.png]}
+
+This is a question: \thinrule
+
+\section[title={Exercise: Code},reference={exercise-code}]
+
+\starttyping
+<body>
+  <h1>Test</h1>
+  <a href="pmhs.de">Link</a>
+</body>
+\stoptyping
+
+\starttyping
+<body>
+  /BTEX\yellowmarker{/ETEX<h1>/BTEX}/ETEXTest</h1>
+  <a href="pmhs.de">Link</a>
+</body>
+\stoptyping
+
+\section[title={Exercise: Lines},reference={exercise-lines}]
+
+Put lines for students.
+
+\startitemize[packed]
+\item
+  Question 1. \thinrule
+\item
+  Question 2. \fillinrules[n=2]
+\item
+  Question 3? \fillinrules[n=4]
+\stopitemize
+
+\startitemize[packed]
+\item
+  Answer 1
+\item
+  Answer 2
+\item
+  Answer 3
+\stopitemize
+
+\section[title={Exercise: Textbox},reference={exercise-textbox}]
+
+Adding a textbox for student answers:
+
+~
+
+\framed[width=broad, height=5cm]{}
+
+\section[title={Exercise: Multiple
+choice},reference={exercise-multiple-choice}]
+
+This is a multiple choice question
+
+\startxtable[option=stretch, frame=off]\startxrow\startxcell \symbol[fontawesome-regular][check-square]~Choice A \stopxcell\startxcell \symbol[fontawesome-regular][square]~Choice B \stopxcell\startxcell \symbol[fontawesome-regular][square]~Choice C \stopxcell\stopxrow\stopxtable
+
+\section[title={Exercise: Table},reference={exercise-table}]
+
+TODO
+
+\section[title={Exercise: Querformat
+Tabelle},reference={exercise-querformat-tabelle}]
+
+TODO
+
+\section[title={Lösungen},reference={lösungen}]
+
+\$solutions
+
+\subject[title={References},reference={references}]
+
+\startcslreferences
+
+\reference[ref-ludlSimpleEfficientRealtime2019]{}%
+Ludl, Dennis, Thomas Gulde, and Cristóbal Curio. 2019. “Simple yet
+Efficient Real-Time Pose-Based Action Recognition.” In {\em 22nd IEEE
+Int. Conf. On Intelligent Transportation Systems (ITSC)}, 581--88.
+\useURL[url1][https://doi.org/10.1109/ITSC.2019.8917128]\from[url1].
+
+\stopcslreferences
+
+\stoptext

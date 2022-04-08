@@ -5,7 +5,7 @@ class: TGG11
 context-lang: de
 author: bug
 date: April 4, 2022
-panflute-filters: [exercises, infos, solutions, expectations, code_blocks]
+panflute-filters: [exercises, infos, solutions, expectations, code_blocks, mc]
 panflute-path: '/home/dennis/code/lehre/pandoc-education/filters/'
 figPrefix:
   - "Abbildung"
@@ -29,7 +29,7 @@ This is an exercise with an image, which can be referenced as ich schreib hier S
 
 ![This is the caption](qrcodeYouTubeVideo.png){#fig:qrcode}
 
-This is a question: \hrulefill
+This is a question: \thinrule
 
 # Exercise: Code {.exercise time=3}
 ```html
@@ -49,10 +49,46 @@ This is a question: \hrulefill
 :::
 
 # Exercise: Lines {.exercise time=3}
-TODO
+Put lines for students. 
+
+- Question 1. \thinrule
+- Question 2. \fillinrules[n=2]
+- Question 3?  \fillinrules[n=4]
+
+::: solution
+- Answer 1
+- Answer 2
+- Answer 3
+:::
+
 
 # Exercise: Textbox {.exercise time=2}
-TODO: Generate Textbox for answers
+Adding a textbox for student answers:
+
+&nbsp;
+
+\framed[width=broad, height=5cm]{}
+
+# Exercise: Multiple choice {.exercise time=2}
+This is a multiple choice question
+
+::: {.mc n=3}
+[Choice A]{}
+[Choice B]{}
+[Choice C]{}
+[Choice D]{}
+[Choice E]{}
+:::
+
+::: solution
+::: {.mc n=3}
+[Choice A]{correct=true}
+[Choice B]{}
+[Choice C]{}
+[Choice D]{}
+[Choice E]{correct=true}
+:::
+:::
 
 # Exercise: Table {.exercise time=2}
 TODO
@@ -60,71 +96,9 @@ TODO
 # Exercise: Querformat Tabelle {.exercise time=42}
 TODO
 
-
-# Suchanfragen {.exercise time=8}
-Du möchtest etwas über die Programmiersprache Rust lernen, dafür suchst du nach "Wie kann ich Rust lernen?". 
-
-- Erkläre wie diese Suchanfrage verkürzt werden kann.  
-- Die offizielle Domain der Programmiersprache Rust lautet **rust-lang.org**. Nenne den Befehl, der vor die eigentliche Suchanfrage gesetzt werden, damit nur auf dieser Seite gesucht wird.
-- Es gibt auch ein Spiel mit dem Namen **Rust**. Um dieses zu lernen suchst du nach "rust einführung", dir werden aber hauptsächlich Websites zur Programmiersprache Rust angezeigt. Wie könnte die Suchanfrage angepasst werden, damit Suchergebnisse für das Spiel erscheinen?
-
-::: solution
-- "rust lernen": Groß- und Kleinschreibung sowie häufig genutzte Wörter und Satzzeichen werden ignoriert und können weggelassen werden.
-- site:rust-lang.org
-- z.B: rust spiel einführung, rust einführung -programmiersprache, rust game einführung, ...
-- Bei Anzeigen steht "Anzeige" vor der URL.
-:::
-
-::: expectations
-[Das erfüllt]{points=1}
-[oder das]{points=2}
-[oder dies]{points=3}
-:::
-
-# Frage2 {.exercise time=2}
-ABC
-
-::: solution
-Lösung 2
-:::
-
-::: expectations
-[Das erfüllt2]{points=1}
-[oder das2]{points=2}
-[oder dies2]{points=3}
-:::
-
-# Frage3 {.exercise time=2}
-ABC
-
-::: solution
-Lösung 3
-:::
-
-::: expectations
-[Das erfüllt3]{points=1}
-[oder das3]{points=2}
-[oder dies3]{points=3}
-:::
-
-# Frage4 {.exercise time=2}
-ABC
-
-::: solution
-Lösung 4
-:::
-
-
-::: expectations
-[Das erfüllt4]{points=1}
-[oder das4]{points=2}
-[oder dies4]{points=3}
-:::
-
+\page
 # Lösungen
 $solutions
 
-# Erwartungshorizont
-$expectations
-
+\page
 # References
