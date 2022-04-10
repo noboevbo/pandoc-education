@@ -40,9 +40,9 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 
 \definehspace[date][7 em]
 
-\definecolor[schoolcolor][c=1,m=0.68,y=0,k=0.14]
+
 \setupheader[text][
-    before={\startframed[frame=off,bottomframe=on,framecolor=schoolcolor]},
+    before={\startframed[frame=off,bottomframe=on,framecolor=pmhsmain]},
     after={\stopframed},
     style=\tfx
     ]
@@ -50,7 +50,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
     style=\tfx
     ]
 \setupheadertexts[$title$]
-\setupheadertexts[$class$][{\symbol[fontawesome-regular][calendar]\hspace[date]\color[schoolcolor]{$schoolname$}}]
+\setupheadertexts[$class$][{\symbol[fontawesome-regular][calendar]\hspace[date]\color[pmhsmain]{$schoolname$}}]
 \setupfootertexts[Seite \currentpage~von \lastpage]
 \setupfootertexts[$author$][{\symbol[cc][cc]\symbol[cc][by]\symbol[cc][sa]}]
 
@@ -94,10 +94,28 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 % \setupxtable[body][]
 % \setupxtable[foot][bottomframe=on]
 
+% ******************** Colors *********************
+\definecolor[pmhsmain][c=1,m=0.68,y=0,k=0.14]
+
+% Green
+\definecolor[textgreen][c=0.53, m=0, y=0.84, k=0.23]
+\definecolor[markergreen][c=0.53, m=0, y=0.84, k=0.23, t=0.25, a=1]
+% Blue
+\definecolor[textblue][c=0.74, m=0.66, y=0, k=0.22]
+\definecolor[markerblue][c=0.74, m=0.66, y=0, k=0.22, t=0.25, a=1]
+% Red
+\definecolor[textred][c=0, m=0.67, y=0.94, k=0.23]
+\definecolor[markerred][c=0, m=0.67, y=0.94, k=0.23, t=0.25, a=1]
+% Yellow
+\definecolor[textyellow][c=0, m=0.16, y=0.93, k=0.1]
+\definecolor[markeryellow][c=0, m=0.16, y=0.93, k=0.1, t=0.25, a=1]
+% Backgrounds
 \definecolor[codebggray][r=0.95, g=0.95, b=0.95]
+
+% ********************** BARS ************************
 \definebar
   [redmarker]
-  [color=red,
+  [color=markerred,
    rulethickness=1.2em,
    offset=1.2,
    continue=yes,
@@ -105,7 +123,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 
 \definebar
   [yellowmarker]
-  [color=yellow,
+  [color=markeryellow,
    rulethickness=1.2em,
    offset=1.2,
    continue=yes,
@@ -113,7 +131,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 
 \definebar
   [greenmarker]
-  [color=green,
+  [color=markergreen,
    rulethickness=1.2em,
    offset=1.2,
    continue=yes,
@@ -121,7 +139,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 
 \definebar
   [bluemarker]
-  [color=green,
+  [color=markerblue,
    rulethickness=1.2em,
    offset=1.2,
    continue=yes,
