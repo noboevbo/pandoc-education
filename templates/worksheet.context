@@ -54,7 +54,11 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 \setupfootertexts[Seite \currentpage~von \lastpage]
 \setupfootertexts[$author$][{\symbol[cc][cc]\symbol[cc][by]\symbol[cc][sa]}]
 
+$if(figureFrames)$
+\setupfloat[figure][default={here, nonumber}, frame=on, framecolor=darkgray]
+$else$
 \setupfloat[figure][default={here, nonumber}]
+$endif$
 \setupfloat[table][default={here, split}]
 
 \definemeasure[cslhangindent][1.5em]
