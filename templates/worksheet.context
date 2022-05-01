@@ -175,6 +175,14 @@ implement{
      {\clf_qrcode{1cm}{#2}}} %Change 1cm for another default
 \protect
 
+% ********************** Lists ***********************
+
+\setupitemize[autointro]    % prevent orphan list intro
+\setupitemize[indentnext=no]
+
+\defineitemgroup[enumerate]
+\setupenumerate[each][fit][itemalign=left,distance=.5em,style={\feature[+][default:tnum]}]
+
 % ********************** BARS ************************
 \definebar
   [redmarker]
