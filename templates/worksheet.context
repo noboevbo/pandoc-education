@@ -37,6 +37,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 
 \usesymbols[fontawesome]
 \usesymbols[cc]
+\usecolors[crayola]
 
 \definehspace[date][7 em]
 
@@ -237,6 +238,17 @@ implement{
   numbering=yes,
   tab=4,
   escape=command]
+
+\definevimtyping[csv][
+  syntax=csv,
+  numbering=yes,
+  tab=4,
+  escape=command,
+  margin=0.5ex,
+  spacebefore=line,
+  spaceafter=line,
+  before=\startVerbatimBackground,
+  after=\stopVerbatimBackground]
 
 \definevimtyping[plain][
   numbering=yes,
