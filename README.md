@@ -7,6 +7,8 @@
 # Usage
 ```bash
 pandoc -s -t context --template worksheet.context --filter panflute --filter pandoc-crossref --citeproc --bibliography=literature.bib worksheet.md -o worksheet.pdf
+
+pandoc -s -t context --template worksheet.context --filter panflute --filter pandoc-crossref --citeproc --bibliography=literature.bib WEBDEV-01-Info-Freie-Schriftarten.md -o WEBDEV-01-Info-Freie-Schriftarten.pdf
 ```
 
 # Tipps

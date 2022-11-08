@@ -53,7 +53,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 \setupheadertexts[$title$]
 \setupheadertexts[$class$][{\symbol[fontawesome-regular][calendar]\hspace[date]\color[pmhsmain]{$schoolname$}}]
 \setupfootertexts[Seite \currentpage~von \lastpage]
-\setupfootertexts[$author$][{\symbol[cc][cc]\symbol[cc][by]\symbol[cc][sa]}]
+\setupfootertexts[$author$][{\symbol[cc][cc]\symbol[cc][zero]}]
 
 $if(figureFrames)$
 \setupfloat[figure][default={here, nonumber}, frame=on, framecolor=darkgray]
@@ -75,26 +75,8 @@ $endif$
 	$endif$
 ]
 
-\starttypescript [gillius]
-  \definefontsynonym[GilliusADF-Regular]    [file:GilliusADF-Regular]
-  \definefontsynonym[GilliusADF-Italic]     [file:GilliusADF-Italic]
-  \definefontsynonym[GilliusADF-Bold]       [file:GilliusADF-Bold]
-  \definefontsynonym[GilliusADF-BoldItalic] [file:GilliusADF-BoldItalic]
-\stoptypescript
-
-\starttypescript [gillius]
-  \setups[font:fallback:sans]
-  \definefontsynonym[Sans]                [GilliusADF-Regular]    [features=default]
-  \definefontsynonym[SansItalic]          [GilliusADF-Italic]     [features=default]
-  \definefontsynonym[SansBold]            [GilliusADF-Bold]       [features=default]
-  \definefontsynonym[SansBoldItalic]      [GilliusADF-BoldItalic] [features=default]
-\stoptypescript
-
-\starttypescript [gillius]
-  \definetypeface [gillius]    [rm] [serif] [gillius]    [default]
-\stoptypescript
-\setupbodyfont[gillius,ss,13pt]
-\definebodyfontenvironment[default][a=1.1,b=1.2,c=1.3,d=2]
+\setupbodyfont[gentium]
+% \definebodyfontenvironment[default][a=1.1,b=1.2,c=1.3,d=2]
 
 % \setupxtable[frame=off]
 % \setupxtable[head][topframe=on,bottomframe=on]
@@ -233,13 +215,30 @@ implement{
   syntax=html,
   numbering=yes,
   tab=4,
-  escape=command]
+  escape=command,
+  before={\switchtobodyfont[dejavu,tt,9pt]},
+  spacebefore=line,
+  spaceafter=line]
+
+\definevimtyping[css][
+  syntax=css,
+  numbering=yes,
+  tab=4,
+  escape=command,
+  indentnext=auto,
+  before={\switchtobodyfont[dejavu,tt,9pt]},
+  spacebefore=line,
+  spaceafter=line]
+
 
 \definevimtyping[javascript][
   syntax=javascript,
   numbering=yes,
   tab=4,
-  escape=command]
+  escape=command,
+  before={\switchtobodyfont[dejavu,tt,9pt]},
+  spacebefore=line,
+  spaceafter=line]
 
 \definevimtyping[csv][
   syntax=csv,
@@ -249,7 +248,7 @@ implement{
   margin=0.5ex,
   spacebefore=line,
   spaceafter=line,
-  before=\startVerbatimBackground,
+  before={\startVerbatimBackground \switchtobodyfont[dejavu,tt,9pt]},
   after=\stopVerbatimBackground]
 
 \definevimtyping[plain][
@@ -259,11 +258,12 @@ implement{
   margin=0.5ex,
   spacebefore=line,
   spaceafter=line,
-  before=\startVerbatimBackground,
+  before={\startVerbatimBackground \switchtobodyfont[dejavu,tt,9pt]},
   after=\stopVerbatimBackground]
 
 % Turn off section numbers by default
 \setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
+\setuphead[section,subject][numberstyle=bold,textstyle=bold]
 
 $for(header-includes)$
 $header-includes$

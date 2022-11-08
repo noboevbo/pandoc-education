@@ -30,7 +30,7 @@ def finalize(doc):
     logging.info("Set solutions")
     div = Div()
     for solution in doc.solutions:
-        div.content.extend([Header(Str(f'Lösung: Aufgabe {solution.exercise.id} ({solution.exercise.title})'))])
+        div.content.extend([Header(Str(f'Lösung: Aufgabe {solution.exercise.id} ({solution.exercise.title})'), level=2)])
         div.content.extend([solution.elem])
     
     doc = doc.replace_keyword('$solutions', div)
