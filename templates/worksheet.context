@@ -76,6 +76,7 @@ $endif$
 ]
 
 \setupbodyfont[gentium]
+% \setuphead[chapter][style=\tfb\bold]
 \setuphead[section][style=\tfa\bold]
 \setuphead[subsection][style=\bold]
 
