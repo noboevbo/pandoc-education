@@ -30,7 +30,7 @@ def add_points_to_exercise(elem, doc, points, bonuspoints):
     bonus_points_text = f" (+{bonuspoints})" if bonuspoints > 0 else ""
     if doc.format != 'context':
         return
-    elem.content = list(elem.content) + [RawInline(f'\\tfx\\inrightmargin{{\\hl[2] / ~{points}{bonus_points_text} P.}}', format="context")]
+    elem.content = list(elem.content) + [RawInline(f'\\tfxx\\inrightmargin{{\\hl[2] / ~{points}{bonus_points_text} P.}}', format="context")]
 
 def process_expectations(elem, doc):
     logging.info("Found Expectations Block")
