@@ -36,7 +36,6 @@ def process_expectations(elem, doc):
     logging.info("Found Expectations Block")
     exercise = get_exercise_for_element(elem, doc)
     # TODO: Update exercise with points!
-    add_points_to_exercise(exercise.elem, doc, 2, 2)
     doc.exercise_expectations.append(ExerciseExpectation(exercise, []))
     elem.walk(process_expectation, doc)
     return []
@@ -51,15 +50,20 @@ def write_expectations_table(exercise_expectations, doc):
     points = 0
     bonuspoints = 0
     for expectations in exercise_expectations:
+        exercise_points = 0
+        exercise_bonuspoints = 0
         rows.append(TableRow(TableCell(*convert_text(f"**Aufgabe {expectations.exercise.id}**"), colspan=3)))
         for expectation in expectations.expectations:
             points += expectation.points
             bonuspoints += expectation.bonuspoints
+            exercise_points += expectation.points
+            exercise_bonuspoints += expectation.bonuspoints
             bonus = "" if expectation.bonuspoints == 0 else f" (+{expectation.bonuspoints})"
             cell1 = TableCell(Para(*expectation.content))
             cell2 = TableCell(*convert_text((f"{expectation.points}{bonus}")))
             cell3 = TableCell()
             rows.append(TableRow(cell1, cell2, cell3))
+        add_points_to_exercise(expectations.exercise.elem, doc, exercise_points, exercise_bonuspoints)
     footer1 = TableCell(*convert_text('**Gesamt**'))
     footer2 = TableCell(*convert_text(f"{points} (+{bonuspoints})"))
     footer3 = TableCell()
