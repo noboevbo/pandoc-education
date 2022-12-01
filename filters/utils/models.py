@@ -12,10 +12,11 @@ class Exercise:
   time: string
   elem: Header
 
-  def __init__(self, id, title, time, elem) -> None:
+  def __init__(self, id, title, time, part, elem) -> None:
     self.id = id
     self.title = title
     self.time = time
+    self.part = part
     self.elem = elem
 
   def get_from_elem(elem):
@@ -25,6 +26,7 @@ class Exercise:
       id=elem.attributes["id"] if "id" in elem.attributes else "", 
       title=stringify(elem),
       time=elem.attributes["time"] if "time" in elem.attributes else "",
+      part=elem.attributes["part"] if "part" in elem.attributes else "",
       elem=elem)
 
 @dataclass
