@@ -16,6 +16,26 @@ def action(elem, doc):
     if type(elem) == Header:
         if "exercise" in elem.classes:
             return process_exercise_header(elem, doc)
+        
+def get_context_elem(elem, exercise_id):
+    right = False
+    left = RawInline(f'\\llap{{\\getglyphdirect{{ZapfDingbats*dingbats}}{{\\number"270E}}~}}Aufgabe {exercise_id}: ', format="context")
+    if "time" in elem.attributes:
+        right = RawInline (f'\\wordright{{\\tfx\\symbol[fontawesome-regular][clock]~{elem.attributes["time"]} Minuten}}', format="context")
+    elem.content = [left] + list(elem.content)
+    if right:
+        elem.content += [right]
+    return elem
+
+def get_latex_elem(elem, exercise_id):
+    right = False
+    left = RawInline(f'\\marginexercise Aufgabe {exercise_id}: ', format="latex")
+    if "time" in elem.attributes:
+        right = RawInline (f'\\hfill\\normalsize\\faIcon[regular]{{clock}} {elem.attributes["time"]}', format="latex")
+    elem.content = [left] + list(elem.content)
+    if right:
+        elem.content += [right]
+    return elem
 
 def process_exercise_header(elem, doc):
     logging.info("Found Exercise Header")
@@ -35,21 +55,12 @@ def process_exercise_header(elem, doc):
     elem.attributes["part"] = exercise_part
 
     doc.exercises[exercise_id] = Exercise.get_from_elem(elem)
-    right = False
-    left = False
+    
+    if doc.format == 'context':
+        elem = get_context_elem(elem, exercise_id)
+    elif doc.format == 'latex':
+        elem = get_latex_elem(elem, exercise_id)
 
-    if doc.format != 'context':
-        return
-
-    left = RawInline(f'\\llap{{\\getglyphdirect{{ZapfDingbats*dingbats}}{{\\number"270E}}~}}Aufgabe {exercise_id}: ', format="context")
-    if "time" in elem.attributes:
-        right = RawInline (f'\\wordright{{\\tfx\\symbol[fontawesome-regular][clock]~{elem.attributes["time"]} Minuten}}', format="context")
-    if left:
-        elem.content = [left] + list(elem.content)
-    else:
-        elem.content = list(elem.content)
-    if right:
-        elem.content += [right]
     return elem
 
 def main(doc=None):

@@ -1,13 +1,15 @@
 import csv
 import os
+import subprocess
 import pandas as pd
 from string import Template
-import pandoc
+import panflute as pf
 import py7zr
 import jellyfish
 from pathlib import Path
 import numpy as np
 import shutil
+import pandoc
 
 template = Template('''
 ---
@@ -78,16 +80,16 @@ def get_student_cols(df):
         stop = idx
     return start, stop, median
 
-def get_start_stop_row(first_col):
-    start = 3
+def get_start_stop_row(first_col, start=38):
     for idx, row in enumerate(first_col):
+        if idx < start:
+            continue
         if pd.isna(row):
             return start, idx
-    
 
-def get_grade_rows(first_col):
+def get_grade_rows(first_col, start):
     for idx, row in enumerate(first_col):
-        if row == "Gesamt (Punkte)":
+        if idx > start and row == "Gesamt (Punkte)":
             return idx, idx+1, idx+2, idx+3
 
 def get_max_points(df, points_row):
@@ -115,85 +117,88 @@ def create_dir_if_not_exists(directory):
 
 def main(df, graded_files_path, out_dir):
     criteria_col = df[criteria_col_idx]
+    info_col = df[criteria_col_idx + 1]
     student_start_col, student_stop_col, median_col_idx = get_student_cols(df)
     start_row, stop_row = get_start_stop_row(criteria_col)
-    points_row, grade_row, comment_row, invite_row = get_grade_rows(criteria_col)
+    points_row, grade_row, comment_row, invite_row = get_grade_rows(criteria_col, start_row)
     name_row, surname_row, email_row = 0, 1, 2
     max_col = df[max_col_idx]
     max_points = get_max_points(df, points_row)
-    max_per_criteria = get_max_per_criteria(df, start_row, stop_row)
-    median_col = None
-    if median_col_idx > -1:
-        median_col = df[median_col_idx]
-        median_per_criteria = get_median_per_criteria(df, median_col_idx, start_row, stop_row)
-        points_median, grade_median = get_grade_medians(df, median_col_idx, points_row, grade_row)
-    # row_names = list()
-    # students = row_names[0:3]
-    # results = row_names[-5:]
-    # criteria = first_col[start_row:stop_row]
     for student_idx in df:
         if student_idx < student_start_col:
             continue
         if student_idx > student_stop_col:
             break
         student = df[student_idx]
-        if pd.isna(student[grade_row]):
-            continue
         name = student[name_row]
         surname = student[surname_row]
+        if pd.isna(student[grade_row]):
+            print(f"NoGrade - Skipping {name} {surname}")
+            continue
+
         print(f"working on {name} {surname} ({student[grade_row]} / {student[points_row]}")
-        text = f'''Liebe(r) {name} {surname},
+        text = f'''# Bewertungsbogen "Projekt Postkarte"
+Name: {surname} {name}
 
-deine Arbeit wurde wie folgt bewertet:
-
-
-| Kriterium | Punkte | Von | Median Klasse |
-| --- | --- | --- | --- |
+Punkte: {student[points_row]} / {max_points} | Note: **{student[grade_row]}**
+'''
+        text += '''
+| Kriterium | Beschreibung | Punkte |
+| --------- | -------------------- | --- |
 '''
 
         for idx in range(start_row, stop_row):
-            median = "-"
-            if median_col is not None:
-                median = median_col[idx]
-            text += f"| {criteria_col[idx]} | {student[idx]} | {max_col[idx]} | {median} |\n"
-        median_points_all = "-"
-        median_grade_all = "-"
-        if median_col is not None:
-            median_points_all = median_col[points_row]
-            median_grade_all = median_col[grade_row]
-        text += f"""| Gesamtpunkte | {student[points_row]} | {max_points} | {median_points_all} |
-| **Note** | **{student[grade_row]}** | - | {median_grade_all} |"""
+            criteria = criteria_col[idx]
+            if criteria == "Vollständigkeit":
+                text += f"| {criteria} | {info_col[idx]} | {student[idx]} |\n"
+            else:
+                text += f"| {criteria} | {info_col[idx]} | {student[idx]} / \\color[blue]{{{max_col[idx]}}} |\n"
         comments = student[comment_row]
         if not pd.isna(comments):
             text += f"""
             
-Kommentare: 
+Anmerkungen: 
         
 {comments}"""
-        text += """
-
-Für Rückfragen stehe ich gerne zur Verfügung. Sollte sich die vorliegende Bewertung auf eine Klassenarbeit beziehen wird diese in der nächsten Stunde besprochen.
-
-
-Herzliche Grüße
-
-Dennis Burgermeister"""
         text = template.substitute(content=text)
         name_wo_spaces = name.replace(" ", "_")
         surname_wo_spaces = surname.replace(" ", "_")
         student_out_dir = os.path.join(out_dir, f"{surname_wo_spaces}_{name_wo_spaces}")
         create_dir_if_not_exists(student_out_dir)
         # print(text)
-        get_graded_data(graded_files_path, name, surname, student_out_dir)
-        doc = pandoc.read(text, format="markdown")
-        pandoc.write(doc, file=os.path.join(student_out_dir, f"Bewertung_{name_wo_spaces}_{surname_wo_spaces}.pdf"), format="latex")
-        # TODO: Get PDF Entry
+        get_graded_data(graded_files_path, name, surname, out_dir)
+        out_path_raw = os.path.join(out_dir, f"Bewertung_{name_wo_spaces}_{surname_wo_spaces}")
+        tmp_path = out_path_raw+".md"
+        out_path = out_path_raw+".pdf"
+        my_env = os.environ.copy()
+        my_env["PATH"] = "/usr/sbin:/sbin:" + my_env["PATH"]
+        with open(tmp_path, "w") as writer:
+            writer.write(text)
+        result = subprocess.run([f"pandoc -s -t context --template gmtsheet.context {tmp_path} -o {out_path}"], capture_output=True, shell=True)
+        a = 1
+
+        #         child = subprocess.Popen(f"pandoc --help", env=my_env)
+        # streamdata = child.communicate()
+        # a = 1
+
+        #doc = pandoc.read(text, format="markdown")
+        #pandoc.write(doc, file=os.path.join(student_out_dir, f"Bewertung_{name_wo_spaces}_{surname_wo_spaces}.pdf"), format="latex", options=["-s", "-t=latex"])
+
+       # doc = pf.convert_text(text, output_format="latex")
+        #a = 1
+        #pf.run_pandoc("-s -t latex ")es_path, name, spf.convert_text(text, output_format="html")
+        #a = 1c = pandoc#pf.convert_textformat="markdown")
+        #pandoc.write(doc, file=os.path.join(student_out_dir, f"Bewertutex{name_wo_spaces}_{, template="latex"surname_wo_spaces}.pdf"), format="latex")
+        # TODO: Get PDF E# ntry
 
 if __name__ == "__main__":
-    # noten_csv = get_df("/home/dennis/Vaults/SJ2223/F1ML1/Notenverwaltung.csv")
-    # rueckgabe_datei_pfad = "/home/dennis/Vaults/SJ2223/F1ML1/KA1/"
-    # output_path = "/home/dennis/Vaults/SJ2223/F1ML1/KA1/rueckgabe"
-    noten_csv = get_df("/mnt/d/1BK1T2/PraesiLayout/PraesiLayout.csv")
-    rueckgabe_datei_pfad = "/mnt/d/1BK1T2/PraesiLayout"
-    output_path = "/mnt/d/1BK1T2/PraesiLayout/rueckgabe"
+    # noten_csv = get_df("/home/dennis/Vaults/SJ2223/TGG11_1_INF/KA1N# achschreiber/Notenverwaltung.csv")
+    # rueckgabe_datei_pfad = "/home/dennis/Vaults/SJ2# 223/TGG11_1_INF/KA1Nachschreiber/"
+    # output_path = "/home/dennis/Vaults/SJ2223"
+    # noten_csv = get_df("/home/dennis/Vaults/SJ2223/TGG11_2_GMT/Postkarten.csv")
+    # rueckgabe_datei_pfad = "/home/dennis/Vaults/SJ2223/TGG11_2_GMT/Postkarten/"
+    # output_path = "/home/dennis/Vaults/SJ2223/TGG11_2_GMT/Postkarten/rueckgabe"
+    noten_csv = get_df("/home/dennis/tmp/Postkarten.csv")
+    rueckgabe_datei_pfad = "/home/dennis/tmp"
+    output_path = "/home/dennis/tmp/rueckgabe"
     main(noten_csv, rueckgabe_datei_pfad, output_path)

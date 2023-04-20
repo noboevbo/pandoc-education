@@ -1,0 +1,111 @@
+\usemodule[tikz]
+% Enable hyperlinks
+\setupinteraction
+  [state=start,
+  author={Dennis Burgermeister; PMHS Nürtingen},
+  style=,
+  color=,
+  contrastcolor=]
+
+\setuppapersize[A4, landscape]
+
+\setuplanguage[de] 
+[leftquote=\rightsubguillemot,rightquote=\leftsubguillemot,
+leftquotation=\rightguillemot,rightquotation=\leftguillemot]
+
+\setuplayout[
+  topspace=.5cm,
+  height=fit,
+  headerdistance=-0.7cm,
+  % footerdistance=2cm,
+  bottomspace=.5cm,
+  ]
+% Remove page numbers
+\setuppagenumbering[location=]
+\usesymbols[fontawesome]
+\usesymbols[cc]
+\usecolors[crayola]
+
+\definehspace[date][7 em]
+
+
+% \setupheader[text][
+%     before={\startframed[frame=off,bottomframe=on,framecolor=pmhsmain]},
+%     after={\stopframed},
+%     style=\tfx
+%     ]
+% \setupfooter[text][
+%     style=\tfx
+%     ]
+% \setupheadertexts[]
+% \setupheadertexts[][{\symbol[fontawesome-regular][calendar]\hspace[date]\color[pmhsmain]{}}]
+% \setupfootertexts[Seite \currentpage~von \lastpage]
+% \setupfootertexts[Dennis BurgermeisterPMHS
+% Nürtingen][{\symbol[cc][cc]\symbol[cc][zero]}]
+
+\setupfloat[figure][default={here, nonumber}]
+\setupfloat[table][default={here, split}]
+
+\definemeasure[cslhangindent][1.5em]
+\definenarrower[hangingreferences][left=\measure{cslhangindent}]
+\definestartstop [cslreferences] [
+	]
+
+\setupbodyfont[gentium]
+% \setuphead[chapter][style=\tfb\bold]
+\setuphead[section][style=\tfa\bold]
+\setuphead[subsection][style=\bold]
+
+% \definebodyfontenvironment[default][a=1.1,b=1.2,c=1.3,d=2]
+\definecolor[ColourTertiaryLt][h=f2f2f2]
+\setupxtable[frame=on, framecolor=white,rulethickness=.2em]
+\setupxtable[head][topframe=on,bottomframe=on]
+\setupxtable[body][background=color, backgroundcolor=ColourTertiaryLt,]
+% \setupxtable[foot][bottomframe=on]
+
+% ******************** Colors *********************
+\definecolor[pmhsmain][c=1,m=0.68,y=0,k=0.14]
+
+% Green
+\definecolor[textgreen][c=0.53, m=0, y=0.84, k=0.23]
+\definecolor[markergreen][c=0.53, m=0, y=0.84, k=0.23, t=0.25, a=1]
+% Blue
+\definecolor[textblue][c=0.74, m=0.66, y=0, k=0.22]
+\definecolor[markerblue][c=0.74, m=0.66, y=0, k=0.22, t=0.25, a=1]
+% Red
+\definecolor[textred][c=0, m=0.67, y=0.94, k=0.23]
+\definecolor[markerred][c=0, m=0.67, y=0.94, k=0.23, t=0.25, a=1]
+% Yellow
+\definecolor[textyellow][c=0, m=0.16, y=0.93, k=0.1]
+\definecolor[markeryellow][c=0, m=0.16, y=0.93, k=0.1, t=0.25, a=1]
+% Backgrounds
+\definecolor[codebggray][r=0.95, g=0.95, b=0.95]
+
+% Turn off section numbers by default
+\setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
+\setuphead[section,subject][numberstyle=bold,textstyle=bold]
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\starttext
+$for(include-before)$
+$include-before$
+$endfor$
+$if(toc)$
+\completecontent
+$endif$
+$if(lof)$
+\completelistoffigures
+$endif$
+$if(lot)$
+\completelistoftables
+$endif$
+
+$body$
+
+$for(include-after)$
+$include-after$
+$endfor$
+\stoptext

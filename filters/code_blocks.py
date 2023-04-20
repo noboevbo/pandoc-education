@@ -14,9 +14,8 @@ def action(elem, doc):
 def process_code_block(elem, doc):
     logging.info("Found Code Block")
     logging.info(elem)
-    newel = RawBlock(elem.text, format="context")
     if doc.format != 'context':
-        return
+        return elem
     return RawBlock(f'\\start{elem.classes[0]}\n{elem.text}\n\\stop{elem.classes[0]}', format="context")
 
 def main(doc=None):

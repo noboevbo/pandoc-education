@@ -23,6 +23,10 @@ def process_color(elem, doc):
         logging.info("Set context color")
         text = stringify(elem).replace('""', '')
         return RawInline(f'\\color[{color}]{{{text}}}', format="context")
+    if doc.format == "latex":
+        logging.info("Set color LaTex")
+        text = stringify(elem).replace('""', '') 
+        return RawInline(f'\\textcolor{{{color}}}{{{text}}}', format="latex")
     return elem
 
 def main(doc=None):

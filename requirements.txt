@@ -1,0 +1,6 @@
+pandoc
+py7zr
+jellyfish
+numpy
+pandas
+panflute

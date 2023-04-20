@@ -9,6 +9,8 @@
 pandoc -s -t context --template worksheet.context --filter panflute --filter pandoc-crossref --citeproc --bibliography=literature.bib worksheet.md -o worksheet.pdf
 
 pandoc -s -t context --template worksheet.context --filter panflute --filter pandoc-crossref --citeproc --bibliography=literature.bib WEBDEV-01-Info-Freie-Schriftarten.md -o WEBDEV-01-Info-Freie-Schriftarten.pdf
+
+ pandoc -s -t latex --template worksheet.latex --pdf-engine=lualatex --filter panflute --filter pandoc-crossref --citeproc --bibliography=literature.bib CAD-AB-03-01_CAD-Technische_Zeichnung_zu_Klemmbaustein.md -o CAD-AB-03-01_CAD-Technische_Zeichnung_zu_Klemmbaustein.pdf
 ```
 
 # Tipps
