@@ -506,6 +506,13 @@ $endif$
 	\end{tikzpicture}
 }
 
+\NewDocumentCommand\drawGrid{O{1.0}O{1.0}m}{
+	\begin{tikzpicture}
+		\draw[line width=0.25pt] (0, 0) rectangle (#1\linewidth, #3);  
+    \draw[gray,line width=0.25pt, step=#2] (0, 0) grid (#1\linewidth, #3);
+	\end{tikzpicture}
+}
+
 \usepackage{tikz}
 
 %%%% To calculated remaining space
