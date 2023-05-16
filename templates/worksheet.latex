@@ -566,15 +566,14 @@ marginparwidth=5cm,
 
 %% SYMBOLS
 \usepackage{marginnote}
-\reversemarginpar
-\newcommand{\marginexercise}{\protect\marginnote{\hfill\Large\faIcon{pencil-alt}}}
-\newcommand{\margininfo}{\protect\marginnote{\hfill\Large\faIcon[regular]{lightbulb}}}
+\newcommand{\marginexercise}{\protect\reversemarginpar\protect\marginnote{\hfill\Large\faIcon{pencil-alt}}}
+\newcommand{\margininfo}{\protect\reversemarginpar\protect\marginnote{\hfill\Large\faIcon[regular]{lightbulb}}}
 
 \NewDocumentCommand\marginpoints{O{} m}{\protect\normalmarginpar\protect\marginnote{\normalsize#1 / #2 P}}
 
 %% QRCODE
 \usepackage{qrcode}
-\qrset {height=1.5cm}
+\qrset {height=2cm}
 \NewDocumentCommand\drawQRCode{m}{\protect\normalmarginpar\protect\marginnote{\qrcode{#1}}}
 
 %% KOPF & FUßZEILE
