@@ -31,7 +31,7 @@ def add_points_to_exercise(elem, doc, points, bonuspoints):
     if doc.format == 'context':
         elem.content = list(elem.content) + [RawInline(f'\\tfxx\\inrightmargin{{\\hl[2] / ~{points}{bonus_points_text} P.}}', format="context")]
     elif doc.format == 'latex':
-        elem.content = list(elem.content) + [RawInline(f'\\marginpoints{{{points}{{bonus_points_text}}}}', format="latex")]
+        elem.content = list(elem.content) + [RawInline(f'\\marginpoints{{{points}{bonus_points_text}}}', format="latex")]
     return elem
 
 def process_expectations(elem, doc):

@@ -480,6 +480,15 @@ $endif$
 %%%%% NEWWW
 \usepackage{tikz}
 \usetikzlibrary{calc}
+\usetikzlibrary{shapes.symbols}
+\usetikzlibrary{positioning}
+
+% ********************* PGF Layers
+\pgfdeclarelayer{bg}
+\pgfdeclarelayer{layer1}
+\pgfdeclarelayer{layer2}
+\pgfdeclarelayer{layer3}
+\pgfsetlayers{bg,main,layer1,layer2,layer3}
 
 % Functions
 % line hight, line length (fraction linewidth), num lines
