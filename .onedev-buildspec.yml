@@ -1,0 +1,18 @@
+version: 22
+jobs:
+- name: Push to GitHub
+  steps:
+  - !PushRepository
+    name: Push to GitHub
+    remoteUrl: https://github.com/noboevbo/pansi
+    userName: noboevbo
+    passwordSecret: github-access-token
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !TagCreateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
