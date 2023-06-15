@@ -4,7 +4,7 @@ jobs:
   steps:
   - !PushRepository
     name: Push to GitHub
-    remoteUrl: https://github.com/noboevbo/pansi
+    remoteUrl: https://github.com/noboevbo/pandoc-education
     userName: noboevbo
     passwordSecret: github-access-token
     force: false
