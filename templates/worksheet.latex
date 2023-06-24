@@ -478,6 +478,10 @@ $endif$
 $endif$
 
 %%%%% NEWWW
+%% tables
+\usepackage{tabularray}
+
+%% tikz
 \usepackage{tikz}
 \usetikzlibrary{calc}
 \usetikzlibrary{shapes.symbols}
@@ -512,8 +516,6 @@ $endif$
     \draw[gray,line width=0.25pt, step=#2] (0, 0) grid (#1\linewidth, #3);
 	\end{tikzpicture}
 }
-
-\usepackage{tikz}
 
 %%%% To calculated remaining space
 \newcommand{\currentsidemargin}{%

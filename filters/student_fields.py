@@ -41,9 +41,9 @@ def process_lines(elem, doc):
 def process_box(elem, doc):
     logging.info("Draw Box")
     box = elem.attributes["box"]
-    if "grid" in elem.classes:
-        return RawInline(f'~\\\\ \\drawGridBox{{{box}}}\\\\~', format="latex")
     if doc.format == "latex":
+        if "grid" in elem.classes:
+            return RawInline(f'~\\\\ \\drawGridBox{{{box}}}\\\\~', format="latex")
         return RawInline(f'~\\\\ \\drawBox{{{box}}}\\\\~', format="latex")
 
     return elem
@@ -51,10 +51,11 @@ def process_box(elem, doc):
 def process_grid(elem, doc):
     logging.info("Draw Grid")
     grid = elem.attributes["grid"]
-    if "steps" in elem.attributes:
-        steps = elem.attributes["steps"]
-        return RawInline(f'~\\\\ \\drawGrid[1.0][{steps}]{{{grid}}}\\\\~', format="latex")
     if doc.format == "latex":
+        if "steps" in elem.attributes:
+            steps = elem.attributes["steps"]
+            return RawInline(f'~\\\\ \\drawGrid[1.0][{steps}]{{{grid}}}\\\\~', format="latex")
+    
         return RawInline(f'~\\\\ \\drawGrid[1.0][1.0]{{{grid}}}\\\\~', format="latex")
 
     return elem
