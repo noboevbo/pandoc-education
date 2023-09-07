@@ -85,9 +85,9 @@ $endif$
 % \definebodyfontenvironment[default][a=1.1,b=1.2,c=1.3,d=2]
 
 % Table Doku: http://www.pragma-ade.nl/general/manuals/xtables-mkiv.pdf
-\setupxtable[frame=off,split=yes,offset=2mm]
+\setupxtable[frame=off,split=yes,offset=2mm,option=stretch]
 \setupxtable[head][]
-\setupxtable[body][frame=on,height=1cm]
+\setupxtable[body][frame=on,minheight=1cm]
 
 % \setupxtable[foot][bottomframe=on]
 
@@ -113,63 +113,63 @@ $endif$
 \definecolor[codebggray][r=0.95, g=0.95, b=0.95]
 
 % ********************* QR Code Generation ***********
-\startluacode
+% \startluacode
 
-local table      = table 
-local concat     = table.concat
+% local table      = table 
+% local concat     = table.concat
 
-local interfaces = interfaces
-local implement  = interfaces.implement
+% local interfaces = interfaces
+% local implement  = interfaces.implement
 
-local qr = require"qrencode"
+% local qr = require"qrencode"
 
-local function helper(n)
-    if n > 0  then return 0      end
-    if n < 0  then return 2^24-1 end
-    if n == 0 then return 2^12   end --Should it happen?
-end
+% local function helper(n)
+%     if n > 0  then return 0      end
+%     if n < 0  then return 2^24-1 end
+%     if n == 0 then return 2^12   end --Should it happen?
+% end
 
-local function qrcode_to_ctx(size, text)
-    local n, data, settings
-    local ok, content = qr.qrcode(text)
-    local result = ''
+% local function qrcode_to_ctx(size, text)
+%     local n, data, settings
+%     local ok, content = qr.qrcode(text)
+%     local result = ''
 
-    if not ok then
-        context.type(content) 
-    else
-        data     = {}
-        n        = #content
-        settings = {
-            x      = n, 
-            y      = n,
-            width  = size,
-            height = size
-        }    
-        for i = 1, n do
-            data[i] = {}
-            for j = 1, n do
-                data[i][j] = ('%06X'):format(helper(content[i][j]))
-            end
-            result = result .. concat(data[i])
-        end
-        context.bitmapimage(settings,result)
-    end
-end
+%     if not ok then
+%         context.type(content) 
+%     else
+%         data     = {}
+%         n        = #content
+%         settings = {
+%             x      = n, 
+%             y      = n,
+%             width  = size,
+%             height = size
+%         }    
+%         for i = 1, n do
+%             data[i] = {}
+%             for j = 1, n do
+%                 data[i][j] = ('%06X'):format(helper(content[i][j]))
+%             end
+%             result = result .. concat(data[i])
+%         end
+%         context.bitmapimage(settings,result)
+%     end
+% end
 
-implement{
-    name      = 'qrcode',
-    arguments = {'string', 'string'},
-    actions   = qrcode_to_ctx
-}
+% implement{
+%     name      = 'qrcode',
+%     arguments = {'string', 'string'},
+%     actions   = qrcode_to_ctx
+% }
 
-\stopluacode
-\unprotect
-\unexpanded\def\qrcode{\dosingleempty\qrcode_direct}
-\def\qrcode_direct[#1]#2%
-    {\quitvmode\doifsomethingelse{#1}%
-     {\clf_qrcode{#1}{#2}}
-     {\clf_qrcode{1cm}{#2}}} %Change 1cm for another default
-\protect
+% \stopluacode
+% \unprotect
+% \unexpanded\def\qrcode{\dosingleempty\qrcode_direct}
+% \def\qrcode_direct[#1]#2%
+%     {\quitvmode\doifsomethingelse{#1}%
+%      {\clf_qrcode{#1}{#2}}
+%      {\clf_qrcode{1cm}{#2}}} %Change 1cm for another default
+% \protect
 
 % ********************** Lists ***********************
 

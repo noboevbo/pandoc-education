@@ -36,6 +36,8 @@ def process_lines(elem, doc):
     lines = elem.attributes["lines"]
     if doc.format == "latex":
         return RawInline(f'~\\\\ \\drawLines{{{lines}}}\\\\~', format="latex")
+    if doc.format == "context":
+        return RawInline(f'\\fillinrules[n={lines}]', format="context")
     return elem
 
 def process_box(elem, doc):
