@@ -1,3 +1,5 @@
+%% TODO: https://tex.stackexchange.com/questions/319157/context-wrap-figures-with-text-and-equations - z.B. QRCOde rechts dransetzen! oder auch bei bildern und so
+
 $if(context-lang)$
 \mainlanguage[$context-lang$]
 $endif$
