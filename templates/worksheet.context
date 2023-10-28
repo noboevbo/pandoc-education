@@ -131,6 +131,7 @@ $endif$
 \definecolor[markeryellow][c=0, m=0.16, y=0.93, k=0.1, t=0.25, a=1]
 % Backgrounds
 \definecolor[codebggray][r=0.95, g=0.95, b=0.95]
+\definecolor[noteyellow][r=0.93, g=0.85, b=0.47]
 
 % ********************* QR Code Generation ***********
 % \startluacode
