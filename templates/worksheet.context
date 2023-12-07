@@ -297,7 +297,7 @@ $endif$
 \setuphead[chapter, section, subsection, subsubsection, subsubsubsection, subsubsubsubsection][number=no]
 \setuphead[section,subject][numberstyle=bold,before={\blank[big]}]
 
-\setupexternalfigures[frame=on,spacebefore=1cm]
+\setupexternalfigures[spacebefore=1cm]
 
 $for(header-includes)$
 $header-includes$
