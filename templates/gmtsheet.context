@@ -7,7 +7,7 @@
   color=,
   contrastcolor=]
 
-\setuppapersize[A4, landscape]
+\setuppapersize[A4]
 
 \setuplanguage[de] 
 [leftquote=\rightsubguillemot,rightquote=\leftsubguillemot,

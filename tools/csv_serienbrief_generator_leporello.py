@@ -39,6 +39,8 @@ def get_df(csv_path):
     return pd.read_csv(csv_path, encoding="UTF-8", index_col=None, header=None)
 
 def get_student_name(df_student_col):
+    if pd.isna(df_student_col[0]) or pd.isna(df_student_col[1]):
+        return None
     return f"{df_student_col[0]} {df_student_col[1]}"
 
 def get_next_entry_idx(df_col, curr_idx):
@@ -61,12 +63,14 @@ class StudentSubCriteria:
 @dataclass
 class Criteria:
     name: str
+    description: str
     factors: list[SubCriteria]
     points_idx: int
 
 @dataclass
 class StudentCriteria:
     name: str
+    description: str
     factors: list[StudentSubCriteria]
     points: float
 
@@ -80,12 +84,11 @@ def get_sub_criteria(df_col, curr_idx) -> list[SubCriteria]:
 
 def get_criteria(text_col, curr_row_idx):
     criteria_idx = get_next_entry_idx(text_col, curr_row_idx)
-    x = text_col[criteria_idx]
     if not criteria_idx or text_col[criteria_idx] == "Gesamtpunkte":
         return None
-    sub_criteria = get_sub_criteria(text_col, criteria_idx+1)
+    sub_criteria = get_sub_criteria(text_col, criteria_idx+2)
     points_idx = sub_criteria[-1].idx + 5
-    return Criteria(text_col[criteria_idx], sub_criteria, points_idx)
+    return Criteria(text_col[criteria_idx], text_col[criteria_idx+1], sub_criteria, points_idx)
 
 @dataclass
 class GradeInfo:
@@ -139,17 +142,20 @@ Punkte: {student_grade_info.reached_points:.0f} / {student_grade_info.max_points
     '''
 
     for criteria in student_grade_info.student_criteria:
-        text += f"| {criteria.name} | TODO | {criteria.points:.2f} |\n"
+        text += f"| {criteria.name} | {criteria.description} | {criteria.points:.2f} |\n"
 
-    text += "\n# Anmerkungen zu Abzügen\n\n"
+    text += "\n## Anmerkungen zu Abzügen\n\n"
     for criteria in student_grade_info.student_criteria:
-        text += f"\n## {criteria.name}\n\n"
+        title_added = False
         for factor in criteria.factors:
             if factor.points <= 0:
                 continue
-            text += f"- *{factor.description}*: {get_minus_text(factor.points)}"
+            if not title_added:
+                text += f"\n### {criteria.name}\n\n"
+                title_added = True
+            text += f"- {factor.description}: *{get_minus_text(factor.points)}*"
             if factor.comment and factor.comment != "" and not pd.isna(factor.comment):
-                text += f" ({factor.comment})"
+                text += f" *({factor.comment})*"
             text += "\n"
     return text
 
@@ -166,7 +172,7 @@ def get_student_criteria_list(critiera_list: list[Criteria], points_col: pd.Data
     student_criteria_list = []
     for criteria in critiera_list:
         student_factors = get_student_critieria_factors(criteria.factors, points_col, comment_col)
-        student_criteria_list.append(StudentCriteria(criteria.name, student_factors, float(points_col[criteria.points_idx])))
+        student_criteria_list.append(StudentCriteria(criteria.name, criteria.description, student_factors, float(points_col[criteria.points_idx])))
     return student_criteria_list
 
 
@@ -186,6 +192,8 @@ def get_grade_string(grade_df, out_dir):
         points_col = grade_df[curr_student_col]
         comment_col = grade_df[curr_student_col+1]
         student_name = get_student_name(points_col)
+        if not student_name:
+            return
         student_grade_info = get_student_grade_info(grade_info, points_col, comment_col)
         text = get_student_text(student_name, student_grade_info)
         md_path = os.path.join(out_dir, f"{student_name.replace(' ', '_')}.md")
@@ -195,6 +203,9 @@ def get_grade_string(grade_df, out_dir):
         with open(md_path, "w") as writer:
             writer.write(text)
         result = subprocess.run([f"pandoc -s -t context --template gmtsheet.context {md_path} -o {pdf_path}"], capture_output=True, shell=True)
+        curr_student_col += 2
+        os.remove(md_path)
+
 
 if __name__ == "__main__":
     # parser = argparse.ArgumentParser(
