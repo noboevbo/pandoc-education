@@ -34,86 +34,10 @@ colorlinks: true
 
 $content''')
 
-criteria_col_idx = 0
-weights_col_idx = 1
-max_col_idx = 2
-
-def get_similarity(a, b):
-    # print(f"check similarity between {a} and {b}")
-    return jellyfish.jaro_distance(a, b)
 
 def get_df(csv_path):
     return pd.read_csv(csv_path, encoding="UTF-8", index_col=None, header=None)
 
-def get_graded_data(graded_files_path, student_name, student_surname, out_dir):
-    import os
-    full_name = f"{student_name}_{student_surname}"
-    most_similar = [0, None]
-    for fname in os.listdir(graded_files_path):
-        # print(f"Search in: {fname} for {student_name} / {student_surname}")
-        if not fname.startswith("K_"):
-            continue
-        if student_name in fname:
-            # print(fname, "has the keyword")
-            similarity = get_similarity(fname[2:-4], full_name)
-            if similarity > most_similar[0]:
-                most_similar[0] = similarity
-                most_similar[1] = fname 
-    if most_similar[0] > 0.7:
-        # print(f"similarity between {full_name} and {most_similar[1]}: {most_similar[0]}")   
-        out_path = os.path.join(out_dir, f"Korrektur_{student_name}_{student_surname}.pdf")
-        if not os.path.exists(out_path):
-            shutil.copy(os.path.join(graded_files_path, most_similar[1]), out_path)
-
-def get_student_cols(df):
-    reserved = ["Vorname", "Gew.", "Max", "", None, "Gesamt (Max)"]
-    start = -1
-    stop = -1
-    median = -1
-    for idx in df:
-        student = df[idx]
-        first_row = student[0]
-        if first_row == "Median":
-            median = idx
-            continue
-        if pd.isna(first_row) or first_row in reserved:
-            continue
-        if start == -1:
-            start = idx
-        stop = idx
-    return start, stop, median
-
-def get_start_stop_row(first_col, start=38):
-    for idx, row in enumerate(first_col):
-        if idx < start:
-            continue
-        if pd.isna(row):
-            return start, idx
-
-def get_grade_rows(first_col, start):
-    for idx, row in enumerate(first_col):
-        if idx > start and row == "Gesamt (Punkte)":
-            return idx, idx+1, idx+2, idx+3
-
-def get_max_points(df, points_row):
-    return df[max_col_idx][points_row]
-
-def get_weights(df, start_row, stop_row):
-    return df[weights_col_idx][start_row:stop_row]
-
-def get_max_per_criteria(df, start_row, stop_row):
-    return df[max_col_idx][start_row:stop_row]
-
-def get_median_per_criteria(df, median_col, start_row, stop_row):
-    return df[median_col][start_row:stop_row]
-
-def get_grade_medians(df, median_col, points_row, grade_row):
-    median = df[median_col]
-    return median[points_row], median[grade_row]
-
-def save_encrypted_7z(files_path, output_path):
-    with py7zr.SevenZipFile(os.path.join(output_path, f".7z"), 'w', password='secret') as archive:
-        archive.writeall(files_path)
 
 def create_dir_if_not_exists(directory):
     Path(directory).mkdir(parents=True, exist_ok=True)
@@ -209,11 +133,22 @@ class SubCriteria:
     description: str
 
 @dataclass
+class StudentSubCriteria:
+    description: str
+    points: float
+    comment: str
+
+@dataclass
 class Criteria:
     name: str
     factors: list[SubCriteria]
     points_idx: int
 
+@dataclass
+class StudentCriteria:
+    name: str
+    factors: list[StudentSubCriteria]
+    points: float
 
 def get_sub_criteria(df_col, curr_idx) -> list[SubCriteria]:
     factors = []
@@ -238,6 +173,13 @@ class GradeInfo:
     max_points_idx: int
     grade_idx: int
 
+@dataclass
+class StudentGradeInfo:
+    student_criteria: list[StudentCriteria]
+    reached_points: float
+    max_points: float
+    grade: int
+
 def get_grade_info(df):
     text_col = df[0]
     criteria_list = []
@@ -255,10 +197,55 @@ def get_grade_info(df):
     grade_idx = max_points_idx + 1
     return GradeInfo(criteria_list, reached_points_idx, max_points_idx, grade_idx)
 
+def get_minus_text(minus_points):
+    """ Usually 0 - 3, where 3 is worst """
+    if minus_points < 2:
+        return "Kleinere Mängel"
+    elif minus_points < 3:
+        return "Mängel"
+    return "Größere Mängel"
 
-def get_grade_string(grade_df):
+def get_student_text(student_name: str, student_grade_info: StudentGradeInfo):
+    text = f'''# Bewertungsbogen "Projekt Postkarte"
+    Name: {student_name}
+
+    Punkte: {student_grade_info.reached_points:.0f} / {student_grade_info.max_points:.0f} | Note: **{student_grade_info.grade}**
+    '''
+    text += '''
+    | Kriterium | Beschreibung | Punkte |
+    | --------- | -------------------- | --- |
+    '''
+
+    for criteria in student_grade_info.student_criteria:
+        text += f"| {criteria.name} | TODO | {criteria.points:.2f} |\n"
+
+    text += "#Anmerkungen zu Abzügen\n\n"
+    for criteria in student_grade_info.student_criteria:
+        text += f"##{criteria.name}\n\n"
+        for factor in criteria.factors:
+            if factor.points <= 0:
+                continue
+            text += f"*{factor.description}*: {get_minus_text(factor.points)}"
+            if factor.comment and factor.comment != "":
+                text += f" ({factor.comment})"
+            text += "\n"
+    return text
+
+def get_grade_string(grade_df, out_dir):
     grade_info = get_grade_info(grade_df)
-    
+    curr_student_col = 1
+    while curr_student_col < len(grade_df):
+        points_col = grade_df[curr_student_col]
+        comment_col = grade_df[curr_student_col+1]
+        student_name = get_student_name(points_col)
+        text = get_student_text(student_name, )
+        md_path = os.path.join(out_dir, f"{student_name.replace(' ', '_')}.md")
+        pdf_path = os.path.join(out_dir, f"{student_name.replace(' ', '_')}.pdf")
+        my_env = os.environ.copy()
+        my_env["PATH"] = "/usr/sbin:/sbin:" + my_env["PATH"]
+        with open(md_path, "w") as writer:
+            writer.write(text)
+        result = subprocess.run([f"pandoc -s -t context --template gmtsheet.context {md_path} -o {pdf_path}"], capture_output=True, shell=True)
 
 if __name__ == "__main__":
     # parser = argparse.ArgumentParser(
