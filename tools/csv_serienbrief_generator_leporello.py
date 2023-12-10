@@ -38,86 +38,6 @@ $content''')
 def get_df(csv_path):
     return pd.read_csv(csv_path, encoding="UTF-8", index_col=None, header=None)
 
-
-def create_dir_if_not_exists(directory):
-    Path(directory).mkdir(parents=True, exist_ok=True)
-
-def main(df, graded_files_path, out_dir):
-    criteria_col = df[criteria_col_idx]
-    info_col = df[criteria_col_idx + 1]
-    student_start_col, student_stop_col, median_col_idx = get_student_cols(df)
-    start_row, stop_row = get_start_stop_row(criteria_col)
-    points_row, grade_row, comment_row, invite_row = get_grade_rows(criteria_col, start_row)
-    name_row, surname_row, email_row = 0, 1, 2
-    max_col = df[max_col_idx]
-    max_points = get_max_points(df, points_row)
-    for student_idx in df:
-        if student_idx < student_start_col:
-            continue
-        if student_idx > student_stop_col:
-            break
-        student = df[student_idx]
-        name = student[name_row]
-        surname = student[surname_row]
-        if pd.isna(student[grade_row]):
-            print(f"NoGrade - Skipping {name} {surname}")
-            continue
-
-        print(f"working on {name} {surname} ({student[grade_row]} / {student[points_row]}")
-        text = f'''# Bewertungsbogen "Projekt Postkarte"
-Name: {surname} {name}
-
-Punkte: {student[points_row]} / {max_points} | Note: **{student[grade_row]}**
-'''
-        text += '''
-| Kriterium | Beschreibung | Punkte |
-| --------- | -------------------- | --- |
-'''
-
-        for idx in range(start_row, stop_row):
-            criteria = criteria_col[idx]
-            if criteria == "Vollständigkeit":
-                text += f"| {criteria} | {info_col[idx]} | {student[idx]} |\n"
-            else:
-                text += f"| {criteria} | {info_col[idx]} | {student[idx]} / \\color[blue]{{{max_col[idx]}}} |\n"
-        comments = student[comment_row]
-        if not pd.isna(comments):
-            text += f"""
-            
-Anmerkungen: 
-        
-{comments}"""
-        text = template.substitute(content=text)
-        name_wo_spaces = name.replace(" ", "_")
-        surname_wo_spaces = surname.replace(" ", "_")
-        student_out_dir = os.path.join(out_dir, f"{surname_wo_spaces}_{name_wo_spaces}")
-        create_dir_if_not_exists(student_out_dir)
-        # print(text)
-        get_graded_data(graded_files_path, name, surname, out_dir)
-        out_path_raw = os.path.join(out_dir, f"Bewertung_{name_wo_spaces}_{surname_wo_spaces}")
-        tmp_path = out_path_raw+".md"
-        out_path = out_path_raw+".pdf"
-        my_env = os.environ.copy()
-        my_env["PATH"] = "/usr/sbin:/sbin:" + my_env["PATH"]
-        with open(tmp_path, "w") as writer:
-            writer.write(text)
-        result = subprocess.run([f"pandoc -s -t context --template gmtsheet.context {tmp_path} -o {out_path}"], capture_output=True, shell=True)
-        a = 1
-
-        #         child = subprocess.Popen(f"pandoc --help", env=my_env)
-        # streamdata = child.communicate()
-        # a = 1
-
-        #doc = pandoc.read(text, format="markdown")
-        #pandoc.write(doc, file=os.path.join(student_out_dir, f"Bewertung_{name_wo_spaces}_{surname_wo_spaces}.pdf"), format="latex", options=["-s", "-t=latex"])
-
-       # doc = pf.convert_text(text, output_format="latex")
-        #a = 1
-        #pf.run_pandoc("-s -t latex ")es_path, name, spf.convert_text(text, output_format="html")
-        #a = 1c = pandoc#pf.convert_textformat="markdown")
-        #pandoc.write(doc, file=os.path.join(student_out_dir, f"Bewertutex{name_wo_spaces}_{, template="latex"surname_wo_spaces}.pdf"), format="latex")
-        # TODO: Get PDF E# ntry
-
 def get_student_name(df_student_col):
     return f"{df_student_col[0]} {df_student_col[1]}"
 
@@ -160,7 +80,8 @@ def get_sub_criteria(df_col, curr_idx) -> list[SubCriteria]:
 
 def get_criteria(text_col, curr_row_idx):
     criteria_idx = get_next_entry_idx(text_col, curr_row_idx)
-    if not criteria_idx:
+    x = text_col[criteria_idx]
+    if not criteria_idx or text_col[criteria_idx] == "Gesamtpunkte":
         return None
     sub_criteria = get_sub_criteria(text_col, criteria_idx+1)
     points_idx = sub_criteria[-1].idx + 5
@@ -192,13 +113,15 @@ def get_grade_info(df):
         criteria_list.append(criteria)
         curr_row_idx = criteria.points_idx+1
 
-    reached_points_idx = get_next_entry_idx(text_col, curr_row_idx)
+    reached_points_idx = get_next_entry_idx(text_col, criteria_list[-1].points_idx+1)
     max_points_idx = reached_points_idx + 1
     grade_idx = max_points_idx + 1
     return GradeInfo(criteria_list, reached_points_idx, max_points_idx, grade_idx)
 
 def get_minus_text(minus_points):
     """ Usually 0 - 3, where 3 is worst """
+    if minus_points <= 0.1:
+        return None
     if minus_points < 2:
         return "Kleinere Mängel"
     elif minus_points < 3:
@@ -207,29 +130,54 @@ def get_minus_text(minus_points):
 
 def get_student_text(student_name: str, student_grade_info: StudentGradeInfo):
     text = f'''# Bewertungsbogen "Projekt Postkarte"
-    Name: {student_name}
-
-    Punkte: {student_grade_info.reached_points:.0f} / {student_grade_info.max_points:.0f} | Note: **{student_grade_info.grade}**
+Name: {student_name}
+Punkte: {student_grade_info.reached_points:.0f} / {student_grade_info.max_points:.0f} | Note: **{student_grade_info.grade}**
     '''
     text += '''
-    | Kriterium | Beschreibung | Punkte |
-    | --------- | -------------------- | --- |
+| Kriterium | Beschreibung | Punkte |
+| --------- | -------------------- | --- |
     '''
 
     for criteria in student_grade_info.student_criteria:
         text += f"| {criteria.name} | TODO | {criteria.points:.2f} |\n"
 
-    text += "#Anmerkungen zu Abzügen\n\n"
+    text += "\n# Anmerkungen zu Abzügen\n\n"
     for criteria in student_grade_info.student_criteria:
-        text += f"##{criteria.name}\n\n"
+        text += f"\n## {criteria.name}\n\n"
         for factor in criteria.factors:
             if factor.points <= 0:
                 continue
-            text += f"*{factor.description}*: {get_minus_text(factor.points)}"
-            if factor.comment and factor.comment != "":
+            text += f"- *{factor.description}*: {get_minus_text(factor.points)}"
+            if factor.comment and factor.comment != "" and not pd.isna(factor.comment):
                 text += f" ({factor.comment})"
             text += "\n"
     return text
+
+def get_student_critieria_factors(factors: list[SubCriteria], points_col: pd.DataFrame, comment_col: pd.DataFrame):
+    student_factors: list[StudentSubCriteria] = []
+    for factor in factors:
+        if pd.isna(points_col[factor.idx]):
+            continue
+        student_factors.append(StudentSubCriteria(factor.description, float(points_col[factor.idx]), comment_col[factor.idx]))
+    return student_factors
+
+
+def get_student_criteria_list(critiera_list: list[Criteria], points_col: pd.DataFrame, comment_col: pd.DataFrame):
+    student_criteria_list = []
+    for criteria in critiera_list:
+        student_factors = get_student_critieria_factors(criteria.factors, points_col, comment_col)
+        student_criteria_list.append(StudentCriteria(criteria.name, student_factors, float(points_col[criteria.points_idx])))
+    return student_criteria_list
+
+
+def get_student_grade_info(grade_info: GradeInfo, points_col: pd.DataFrame, comment_col: pd.DataFrame):
+    student_criteria_list = get_student_criteria_list(grade_info.criteria, points_col, comment_col)
+    return StudentGradeInfo(student_criteria_list,
+                            float(points_col[grade_info.reached_points_idx]),
+                            float(points_col[grade_info.max_points_idx]),
+                            int(round(float(comment_col[grade_info.grade_idx])))
+                            )
+
 
 def get_grade_string(grade_df, out_dir):
     grade_info = get_grade_info(grade_df)
@@ -238,7 +186,8 @@ def get_grade_string(grade_df, out_dir):
         points_col = grade_df[curr_student_col]
         comment_col = grade_df[curr_student_col+1]
         student_name = get_student_name(points_col)
-        text = get_student_text(student_name, )
+        student_grade_info = get_student_grade_info(grade_info, points_col, comment_col)
+        text = get_student_text(student_name, student_grade_info)
         md_path = os.path.join(out_dir, f"{student_name.replace(' ', '_')}.md")
         pdf_path = os.path.join(out_dir, f"{student_name.replace(' ', '_')}.pdf")
         my_env = os.environ.copy()
@@ -255,8 +204,8 @@ if __name__ == "__main__":
     # parser.add_argument('filename')
     # args = parser.parse_args()
     # TODO: args.filename
-    noten_df = get_df("/Volumes/SJ23_24/GMT12/Bewertungsbogen.csv")
+    noten_df = get_df("/Volumes/SJ23_24/GMT12/BewertungsbogenLeporello.csv")
     rueckgabe_datei_pfad = "/Volumes/SJ23_24/GMT12/rueckgabe"
     output_path = "/Volumes/SJ23_24/GMT12/output"
-    get_grade_string(noten_df)
+    get_grade_string(noten_df, output_path)
     # main(noten_csv, rueckgabe_datei_pfad, output_path)
