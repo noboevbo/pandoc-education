@@ -479,7 +479,7 @@ $endif$
 
 %%%%% NEWWW
 %% tables
-
+\usepackage{tabularx}
 
 $if(tables)$
 \definecolor{table-row-color}{HTML}{F5F5F5}
