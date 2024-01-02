@@ -577,13 +577,9 @@ $endif$
 
 %% Form fields (name, date etc. on exams with text below line)
 % Length of line, text below line
-\NewDocumentCommand\formField{O{5cm}m} {
-  \hbox to #1 {
-    \line(1,0){#1}\vspace{-0.2cm}\\
-    \vspace{-0.3cm}
-    {\scriptsize #2}\\
+\NewDocumentCommand\gradeLine{} {
+  {\scriptsize Name: }\rule{5cm}{0.25pt} \hfill  {\scriptsize Punkte: }\rule{0.5cm}{0.25pt} \quad  {\scriptsize Note: }\rule{0.5cm}{0.25pt}
   }
-}
 
 % Satzspiegel (for 12pt)
 \RequirePackage[a4paper,
