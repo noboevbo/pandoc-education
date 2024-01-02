@@ -607,7 +607,8 @@ marginparwidth=5cm,
 %% KOPF & FUßZEILE
 % Font setup
 \usepackage{lastpage}
-\usepackage[default]{sourcesanspro}
+% \usepackage[default]{sourcesanspro}
+\usepackage[sfdefault]{atkinson}
 \setkomafont{pageheadfoot}{\sffamily\footnotesize}
 \renewcommand*{\familydefault}{\sfdefault}
 \newfontfamily\arial{Arial}
