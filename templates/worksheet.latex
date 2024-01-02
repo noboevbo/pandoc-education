@@ -575,6 +575,16 @@ $endif$
     \node[shape=circle,draw=#3,inner sep=2pt, fill=#1, text=#2] (char) {#4};}
 }
 
+%% Form fields (name, date etc. on exams with text below line)
+% Length of line, text below line
+\NewDocumentCommand\formField{O{5cm}m} {
+  \hbox to #1 {
+    \line(1,0){#1}\vspace{-0.2cm}\\
+    \vspace{-0.3cm}
+    {\scriptsize #2}\\
+  }
+}
+
 % Satzspiegel (for 12pt)
 \RequirePackage[a4paper,
 textwidth=14cm,
