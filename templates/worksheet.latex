@@ -499,7 +499,7 @@ $if(tables)$
 $endif$
 
 %%%% Mehrere Spalten
-\usepackage[multicol]
+\usepackage{multicol}
 
 %% tikz
 \usepackage{tikz}
