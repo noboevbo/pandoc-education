@@ -498,6 +498,9 @@ $if(tables)$
 \global\rownum=0\relax}
 $endif$
 
+%%%% Mehrere Spalten
+\usepackage{multicol}
+
 %% tikz
 \usepackage{tikz}
 \usetikzlibrary{calc}
