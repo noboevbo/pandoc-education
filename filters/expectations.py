@@ -44,7 +44,7 @@ def process_expectations(elem, doc):
     doc.exercise_expectations.append(ExerciseExpectation(exercise, []))
     elem.walk(process_expectation, doc)
 
-    table = f"\\begin{{table}}[htbp]\\centering\\begin{{tabularx}}{{\\textwidth}}{{| X | c |}}\\hline\n"
+    table = f"\\begin{{tabularx}}{{\\textwidth}}{{| X | c |}}\\hline\n"
     rows = []
     for expectation in doc.exercise_expectations[-1].expectations:
         bonus = "" if expectation.bonuspoints == 0 else f" (+{expectation.bonuspoints})"
@@ -52,7 +52,7 @@ def process_expectations(elem, doc):
         table += " & "
         table += f"{expectation.points}{bonus}"
         table += "\\\\ \\hline\n"
-    table += f"\\end{{tabularx}}\\end{{table}}"
+    table += f"\\end{{tabularx}}"
     if "printhere" in elem.classes:
         return RawBlock(table, format="latex")
     return []
