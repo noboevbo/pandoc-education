@@ -45,7 +45,6 @@ def process_expectations(elem, doc):
     elem.walk(process_expectation, doc)
 
     table = f"\\begin{{tabularx}}{{\\textwidth}}{{| X | c |}}\\hline\n"
-    rows = []
     for expectation in doc.exercise_expectations[-1].expectations:
         bonus = "" if expectation.bonuspoints == 0 else f" (+{expectation.bonuspoints})"
         table += stringify(expectation.content)
