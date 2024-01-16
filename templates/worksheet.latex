@@ -607,6 +607,8 @@ marginparwidth=5cm,
 %% Boxen
 \usepackage{awesomebox}
 
+\usepackage{listings}
+
 %% KOPF & FUßZEILE
 % Font setup
 \usepackage{lastpage}
