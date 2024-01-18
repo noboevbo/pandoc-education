@@ -79,14 +79,39 @@ $endif$
 	$endif$
 ]
 
-\setupbodyfont[dejavu,ss,10pt]
-% \setupbodyfont[gentium]
-% \setuphead[chapter][style=\tfb\bold]
-% \definefont  [Header]  [name:gentiumbold*default at 20pt]
+%% FONTS
 
-\setuphead[chapter][style={\switchtobodyfont[gentium]\tfb\bold}]
-\setuphead[section][style={\switchtobodyfont[gentium]\tfb\bold}]
-\setuphead[subsection][style={\switchtobodyfont[gentium]\bold}]
+\starttypescript [sans] [atkinson]
+% \definefontsynonym[Human readable]       [file:filename without extension]
+  \definefontsynonym[AtkinsonHyperlegible-Regular]    [file:Atkinson-Hyperlegible-Regular-102]
+  \definefontsynonym[AtkinsonHyperlegible-Italic]     [file:Atkinson-Hyperlegible-Italic-102.otf]
+  \definefontsynonym[AtkinsonHyperlegible-Bold]       [file:Atkinson-Hyperlegible-Bold-102.otf]
+  \definefontsynonym[AtkinsonHyperlegible-BoldItalic] [file:Atkinson-Hyperlegible-BoldItalic-102.otf]
+\stoptypescript
+
+\starttypescript [sans] [atkinson]
+  \setups[font:fallback:sans]          % security: if not found==> back to defaults
+% \definefontsynonym[ConTeXt basics name] [Human readable]       [features=default]
+  \definefontsynonym[Sans]                [AtkinsonHyperlegible-Regular]    [features=default]
+  \definefontsynonym[SansItalic]          [AtkinsonHyperlegible-Italic]     [features=default]
+  \definefontsynonym[SansBold]            [AtkinsonHyperlegible-Bold]       [features=default]
+  \definefontsynonym[SansBoldItalic]      [AtkinsonHyperlegible-BoldItalic] [features=default]
+\stoptypescript
+
+\starttypescript[AtkinsonHyperlegible]
+  \definetypeface[AtkinsonHyperlegible][ss][sans][atkinson][default]
+\stoptypescript
+
+\setupbodyfont[AtkinsonHyperlegible,ss,11pt]
+%\setupbodyfont[dejavu,ss,11pt]
+% \setupbodyfont[gentium]
+\setuphead[chapter][style=\tfb\bold]
+\setuphead[section,subsection,subsubsection,subsubsubsection][style=\bold]
+%\definefont  [Header]  [name:gentiumbold*default at 20pt]
+
+%\setuphead[chapter][style={\switchtobodyfont[gentium]\tfb\bold}]
+%\setuphead[section][style={\switchtobodyfont[gentium]\tfb\bold}]
+%\setuphead[subsection][style={\switchtobodyfont[gentium]\bold}]
 
 \setuphead
   [chapter]
@@ -204,6 +229,43 @@ $endif$
 \defineitemgroup[enumerate]
 \setupenumerate[each][fit][itemalign=left,distance=.5em,style={\feature[+][default:tnum]}]
 
+% ******************** DRAWINGS **********************
+
+\define[1]\drawBox{
+\startMPcode
+  draw (0, 0) -- (\the\textwidth, 0) -- (\the\textwidth, #1mm) -- (0, #1mm) -- (0, 0);  
+\stopMPcode
+}
+
+\define[2]\drawGrid{
+\startMPcode
+  % parameters
+  u := #2mm;
+  xmin := 0;
+  ymin := 0;
+  xmax := \the\textwidth;
+  ymax := #1mm;
+  xcount := floor(xmax / u);
+  ycount := floor(ymax / u);
+
+  % make a plain grid
+  path xx, yy;
+  xx = ((xmin,0) -- (xmax,0));
+  yy = ((0,ymin) -- (0,ymax));
+
+  drawoptions(dashed evenly scaled .5 withcolor .7 white);
+  for i=0 upto xcount:
+    draw (i*#2mm, 0) -- (i*#2mm, ymax);
+  endfor ;
+  for i=0 upto ycount: 
+    draw (0, i*#2mm) -- (xmax, i*#2mm);
+  endfor ;
+
+  drawoptions(); % reset the draw options
+  draw (xmin, ymin) -- (xmax, ymin) -- (xmax, ymax) -- (xmin, ymax) -- (xmin, ymin);  
+\stopMPcode
+}
+
 % ********************** BARS ************************
 \definebar
   [redmarker]
@@ -246,11 +308,22 @@ $endif$
    bottomoffset=0.25ex,
    framecolor=black]
 
+%% ********************* CODE STYLES ***************************
+
 \usemodule[vim]
 \definevimtyping[html][
   syntax=html,
   numbering=yes,
   tab=4,
+  escape=command,
+  before={\switchtobodyfont[dejavu,tt,9pt]},
+  spacebefore=line,
+  spaceafter=line]
+
+\definevimtyping[xml][
+  syntax=xml,
+  numbering=yes,
+  tab=2,
   escape=command,
   before={\switchtobodyfont[dejavu,tt,9pt]},
   spacebefore=line,

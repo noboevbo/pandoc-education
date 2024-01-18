@@ -532,8 +532,8 @@ $endif$
 
 \NewDocumentCommand\drawGrid{O{1.0}O{1.0}m}{
 	\begin{tikzpicture}
+    \draw[black!7,line width=0.25pt, step=#2] (0, 0) grid (#1\linewidth, #3);
 		\draw[line width=0.25pt] (0, 0) rectangle (#1\linewidth, #3);  
-    \draw[gray,line width=0.25pt, step=#2] (0, 0) grid (#1\linewidth, #3);
 	\end{tikzpicture}
 }
 
@@ -619,9 +619,6 @@ marginparwidth=5cm,
 \newfontfamily\arial{Arial}
 \setkomafont{caption}{\footnotesize}
 \setkomafont{captionlabel}{\usekomafont{caption}}
-\setmainfont{Eczar-SemiBold.otf}
-\setkomafont{section}{\rmfamily\Large}
-\setkomafont{subsection}{\rmfamily\large}
 
 \usepackage[onehalfspacing]{setspace}
 

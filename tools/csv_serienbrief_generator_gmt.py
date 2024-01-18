@@ -1,15 +1,16 @@
 import csv
 import os
+import shutil
 import subprocess
-import pandas as pd
+from pathlib import Path
 from string import Template
+
+import jellyfish
+import numpy as np
+import pandas as pd
+import pandoc
 import panflute as pf
 import py7zr
-import jellyfish
-from pathlib import Path
-import numpy as np
-import shutil
-import pandoc
 
 template = Template('''
 ---
@@ -43,7 +44,6 @@ def get_df(csv_path):
     return pd.read_csv(csv_path, encoding="UTF-8", index_col=None, header=None)
 
 def get_graded_data(graded_files_path, student_name, student_surname, out_dir):
-    import os
     full_name = f"{student_name}_{student_surname}"
     most_similar = [0, None]
     for fname in os.listdir(graded_files_path):
@@ -86,11 +86,17 @@ def get_start_stop_row(first_col, start=38):
             continue
         if pd.isna(row):
             return start, idx
+            
 
 def get_grade_rows(first_col, start):
+    """
+    Test
+    """
     for idx, row in enumerate(first_col):
         if idx > start and row == "Gesamt (Punkte)":
             return idx, idx+1, idx+2, idx+3
+
+
 
 def get_max_points(df, points_row):
     return df[max_col_idx][points_row]
