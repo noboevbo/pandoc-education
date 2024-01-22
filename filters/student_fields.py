@@ -4,7 +4,7 @@
 Processes exercises
 """
 
-from panflute import run_filter, Span, RawInline, stringify
+from panflute import run_filter, Span, RawInline
 import logging
 
 
@@ -47,7 +47,8 @@ def process_box(elem, doc):
         if "grid" in elem.classes:
             return RawInline(f'~\\\\ \\drawGridBox{{{box}}}\\\\~', format="latex")
         return RawInline(f'~\\\\ \\drawBox{{{box}}}\\\\~', format="latex")
-
+    elif doc.format == "context":
+        return RawInline(f'\\\\ \\drawBox{{{box}}}', format="context")
     return elem
 
 def process_grid(elem, doc):
@@ -59,7 +60,10 @@ def process_grid(elem, doc):
             return RawInline(f'~\\\\ \\drawGrid[1.0][{steps}]{{{grid}}}\\\\~', format="latex")
     
         return RawInline(f'~\\\\ \\drawGrid[1.0][1.0]{{{grid}}}\\\\~', format="latex")
-
+    if doc.format == "context":
+        if "steps" in elem.attributes:
+            steps = elem.attributes["steps"]
+            return RawInline(f'\\\\ \\drawGrid{{{steps}}}{{{grid}}}', format="context")
     return elem
 
 def main(doc=None):

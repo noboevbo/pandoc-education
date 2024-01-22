@@ -37,13 +37,19 @@ def add_points_to_exercise(elem, doc, points, bonuspoints):
         elem.content = list(elem.content) + [RawInline(f'\\marginpoints{{{points}{bonus_points_text}}}', format="latex")]
     return elem
 
-def process_expectations(elem, doc):
-    logging.info("Found Expectations Block")
-    exercise = get_exercise_for_element(elem, doc)
-    # TODO: Update exercise with points!
-    doc.exercise_expectations.append(ExerciseExpectation(exercise, []))
-    elem.walk(process_expectation, doc)
+def get_context_inline_table(doc):
+    table = f"\\startxtable[option={{stretch,width}}]\n"
+    for expectation in doc.exercise_expectations[-1].expectations:
+        bonus = "" if expectation.bonuspoints == 0 else f" (+{expectation.bonuspoints})"
+        table += "\\startxrow"
+        table += f"\\startxcell[width=10cm] {stringify(expectation.content)} \\stopxcell"
+        table += f"\\startxcell[width=1cm] {expectation.points}{bonus} \\stopxcell"
+        table += f"\\stopxrow"
+    table += "\\stopxtable"
 
+    return RawBlock(table, format="context")
+
+def get_latex_inline_table(doc):
     table = f"\\begin{{tabularx}}{{\\textwidth}}{{| X | c |}}\\hline\n"
     for expectation in doc.exercise_expectations[-1].expectations:
         bonus = "" if expectation.bonuspoints == 0 else f" (+{expectation.bonuspoints})"
@@ -52,8 +58,21 @@ def process_expectations(elem, doc):
         table += f"{expectation.points}{bonus}"
         table += "\\\\ \\hline\n"
     table += f"\\end{{tabularx}}"
+
+    return RawBlock(table, format="latex")
+
+def process_expectations(elem, doc):
+    logging.info("Found Expectations Block")
+    exercise = get_exercise_for_element(elem, doc)
+    # TODO: Update exercise with points!
+    doc.exercise_expectations.append(ExerciseExpectation(exercise, []))
+    elem.walk(process_expectation, doc)
+    
     if "printhere" in elem.classes:
-        return RawBlock(table, format="latex")
+        if doc.format == 'latex':
+            return get_latex_inline_table(doc)
+        elif doc.format == 'context':
+            return get_context_inline_table(doc)
     return []
 
 def get_expectation_row(expectation):
