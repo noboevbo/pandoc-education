@@ -19,8 +19,10 @@ def action(elem, doc):
             return process_info(elem, doc)
 
 def get_context_info(elem):
-    left = RawBlock(f'\\startframedtext[width=\\makeupwidth,frame=off]\\startframedtext[width=.9\\makeupwidth,frame=on,background=color,backgroundcolor=noteyellow,corner=round,framecolor=black,rulethickness=1pt]', format="context")
-    right = RawBlock(f'\\stopframedtext\\stopframedtext', format="context")
+    # left = RawBlock(f'\\startframedtext[width=\\makeupwidth,frame=off,before=,]\\startframedtext[width=\\makeupwidth,frame=on,background=color,backgroundcolor=noteyellow,corner=round,framecolor=black,rulethickness=1pt]', format="context")
+    # right = RawBlock(f'\\stopframedtext\\stopframedtext', format="context")
+    left = RawBlock("\\startinformation", format="context");
+    right = RawBlock("\\stopinformation", format="context");
     elem.content = [left] + list(elem.content) + [right]
     return elem
 

@@ -40,6 +40,7 @@ leftquotation=\rightguillemot,rightquotation=\leftguillemot]
 \setuplayout[grid=yes]
 
 \usesymbols[fontawesome]
+\usesymbols[mvs]
 \usesymbols[cc]
 \usecolors[crayola]
 
@@ -105,7 +106,7 @@ $endif$
 \setupbodyfont[AtkinsonHyperlegible,ss,11pt]
 %\setupbodyfont[dejavu,ss,11pt]
 % \setupbodyfont[gentium]
-\setuphead[chapter][style=\tfb\bold]
+\setuphead[chapter][style=\tfb\bold,grid=high]
 \setuphead[section,subsection,subsubsection,subsubsubsection][style=\bold]
 %\definefont  [Header]  [name:gentiumbold*default at 20pt]
 
@@ -160,7 +161,7 @@ $endif$
 \definecolor[markeryellow][c=0, m=0.16, y=0.93, k=0.1, t=0.25, a=1]
 % Backgrounds
 \definecolor[codebggray][r=0.95, g=0.95, b=0.95]
-\definecolor[noteyellow][r=0.93, g=0.85, b=0.47]
+\definecolor[noteyellow][r=0.96, g=0.93, b=0.71]
 
 % ********************* QR Code Generation ***********
 % \startluacode
@@ -273,6 +274,24 @@ $endif$
   draw (xmin, ymin) -- (xmax, ymin) -- (xmax, ymax) -- (xmin, ymax) -- (xmin, ymin);  
 \stopMPcode
 }
+
+% ******************** Frames **********************
+
+\startuseMPgraphic{information}
+    draw textext.top("\tfb\symbol[martinvogel 2][Info]") shifted (-EmWidth,OverlayHeight-StrutHeight) ;
+    draw leftboundary OverlayBox topenlarged -StrutHeight shifted (-EmWidth,0) ;
+    setbounds currentpicture to OverlayBox ;
+\stopuseMPgraphic
+
+\defineoverlay[information][\useMPgraphic{information}]
+
+\defineframedtext
+  [information]
+  [frame=off,
+   rulethickness=0pt,
+   offset=0pt,
+   background=information,
+   width=max]
 
 % ********************** BARS ************************
 \definebar
