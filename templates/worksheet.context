@@ -347,6 +347,7 @@ $endif$
   spacebefore=line,
   spaceafter=line]
 
+
 \definevimtyping[xml][
   syntax=xml,
   numbering=yes,
@@ -375,6 +376,16 @@ $endif$
   before={\switchtobodyfont[dejavu,tt,9pt]},
   spacebefore=line,
   spaceafter=line]
+
+\definevimtyping[php][
+  syntax=php,
+  numbering=yes,
+  tab=4,
+  escape=command,
+  before={\switchtobodyfont[dejavu,tt,9pt]},
+  spacebefore=line,
+  spaceafter=line]
+
 
 \definevimtyping[csv][
   syntax=csv,
